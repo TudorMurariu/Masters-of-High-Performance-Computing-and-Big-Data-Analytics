@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Tudor\\Desktop\\Masters of High Performance Computing and Big Data Analytics\\an1\\Sem2\\MPP\\Lab1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{65D2053F-7302-425A-99B6-3B0085CAA294}|Lab1.vcxproj|C:\\Users\\Tudor\\Desktop\\Masters of High Performance Computing and Big Data Analytics\\an1\\Sem2\\MPP\\Lab1\\input.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{65D2053F-7302-425A-99B6-3B0085CAA294}|Lab1.vcxproj|solutionrelative:input.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "input.txt",
+              "DocumentMoniker": "C:\\Users\\Tudor\\Desktop\\Masters of High Performance Computing and Big Data Analytics\\an1\\Sem2\\MPP\\Lab1\\input.txt",
+              "RelativeDocumentMoniker": "input.txt",
+              "ToolTip": "C:\\Users\\Tudor\\Desktop\\Masters of High Performance Computing and Big Data Analytics\\an1\\Sem2\\MPP\\Lab1\\input.txt",
+              "RelativeToolTip": "input.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-03-08T08:36:54.45Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
