@@ -1,0 +1,814 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wine Quality Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --wine: #6b2d5c;
+            --gold: #d4a574;
+            --cream: #f5e6d3;
+            --dark: #1a0f15;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ANIMATED BACKGROUND */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #1a0f15 0%, #2d1f28 50%, #1a0f15 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(107,45,92,0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* FLOATING PARTICLES */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* SLIDES */
+        section {
+            min-height: 100vh;
+            padding: 50px 80px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-num {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-weight: 500;
+            letter-spacing: 3px;
+        }
+
+        /* TYPOGRAPHY */
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 4.5rem;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--cream) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.3rem;
+            color: var(--gold);
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        h2::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--cream);
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        /* LAYOUT */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        /* GLASSMORPHISM CARDS */
+        .glass {
+            background: linear-gradient(135deg, rgba(107,45,92,0.2) 0%, rgba(212,165,116,0.1) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212,165,116,0.2);
+            border-radius: 24px;
+            padding: 30px;
+            margin: 12px 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212,165,116,0.5);
+            box-shadow: 0 20px 60px rgba(107,45,92,0.3);
+        }
+
+        .glass-gold {
+            background: linear-gradient(135deg, rgba(212,165,116,0.15) 0%, rgba(212,165,116,0.05) 100%);
+            border-left: 4px solid var(--gold);
+            border-radius: 0 20px 20px 0;
+        }
+
+        /* STAT BOXES */
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat {
+            flex: 1;
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(145deg, rgba(26,15,21,0.8), rgba(45,31,40,0.6));
+            border: 1px solid rgba(212,165,116,0.2);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .stat:hover {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .stat .value {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), var(--cream));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat .label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        /* IMAGE CONTAINERS */
+        .photo-frame {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s;
+        }
+
+        .photo-frame::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            opacity: 0.5;
+            transition: all 0.3s;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .photo-frame:hover::before {
+            opacity: 1;
+            box-shadow: inset 0 0 30px rgba(212,165,116,0.3);
+        }
+
+        .photo-frame:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 80px rgba(107,45,92,0.4);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            display: block;
+            transition: all 0.4s;
+        }
+
+        .photo-frame:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: linear-gradient(135deg, var(--wine), #8b3a62);
+            color: var(--cream);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 30px;
+            z-index: 3;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(26,15,21,0.95));
+            color: var(--cream);
+            font-size: 0.9rem;
+            z-index: 3;
+        }
+
+        .photo-zoom {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(26,15,21,0.9);
+            color: var(--gold);
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            z-index: 4;
+            transition: all 0.3s;
+            border: 1px solid var(--gold);
+        }
+
+        .photo-frame:hover .photo-zoom {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--wine), #8b3a62);
+            color: var(--cream);
+            font-weight: 500;
+            padding: 16px 20px;
+            text-align: left;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        td {
+            background: rgba(26,15,21,0.6);
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(212,165,116,0.1);
+            color: #ccc;
+        }
+
+        tr:hover td {
+            background: rgba(107,45,92,0.2);
+        }
+
+        tr.winner td {
+            background: linear-gradient(90deg, rgba(76,175,80,0.15), rgba(76,175,80,0.05));
+            color: #7dcea0;
+            font-weight: 600;
+        }
+
+        /* LISTS */
+        ul { margin: 15px 0 15px 25px; }
+        
+        li {
+            margin: 12px 0;
+            color: #bbb;
+            position: relative;
+        }
+
+        li::marker {
+            color: var(--gold);
+        }
+
+        strong {
+            color: var(--gold);
+        }
+
+        /* WINE ICON ANIMATION */
+        .wine-glass {
+            font-size: 6rem;
+            display: block;
+            text-align: center;
+            animation: sway 4s ease-in-out infinite;
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* TITLE SECTION SPECIAL */
+        .title-section {
+            text-align: center;
+        }
+
+        .title-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(107,45,92,0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .date-badge {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 10px 30px;
+            border: 1px solid rgba(212,165,116,0.3);
+            border-radius: 30px;
+            color: #666;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+        }
+
+        /* MODAL */
+        #modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10,5,8,0.97);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        #modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #modal img {
+            max-width: 85%;
+            max-height: 80%;
+            border-radius: 16px;
+            box-shadow: 0 0 100px rgba(212,165,116,0.2);
+            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        #modal .close-btn {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            background: transparent;
+            color: var(--gold);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #modal .close-btn:hover {
+            background: var(--gold);
+            color: var(--dark);
+            transform: rotate(90deg);
+        }
+
+        #modal .caption {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26,15,21,0.9);
+            border: 1px solid rgba(212,165,116,0.3);
+            padding: 15px 40px;
+            border-radius: 40px;
+            color: var(--gold);
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        /* CONCLUSION CARDS */
+        .conclusion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .conclusion-card {
+            background: linear-gradient(135deg, rgba(26,15,21,0.8), rgba(45,31,40,0.6));
+            border: 1px solid rgba(212,165,116,0.15);
+            border-radius: 16px;
+            padding: 20px 25px;
+            transition: all 0.3s;
+        }
+
+        .conclusion-card:hover {
+            border-color: rgba(212,165,116,0.4);
+            transform: translateX(5px);
+        }
+
+        .conclusion-card.winner {
+            border-left: 4px solid #7dcea0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-animation"></div>
+<div class="particles">
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 35%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 1s;"></div>
+    <div class="particle" style="left: 65%; animation-delay: 3s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 5s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" onclick="closeModal()">
+    <button class="close-btn">✕</button>
+    <img id="modal-img" src="">
+    <div class="caption" id="modal-caption"></div>
+</div>
+
+<!-- 1. TITLE -->
+<section class="title-section">
+    <div class="wine-glass">🍷</div>
+    <h1>Wine Quality</h1>
+    <p class="subtitle">Prediction Model</p>
+    <div class="date-badge">DATA MINING • 2026</div>
+    <span class="slide-num">01 — 08</span>
+</section>
+
+<!-- 2. PROBLEM -->
+<section>
+    <h2>🎯 Problem & Dataset</h2>
+    <div class="grid">
+        <div>
+            <div class="glass glass-gold">
+                <p style="font-size: 1.25rem; color: var(--cream);">
+                    <strong>Can we predict wine quality from chemical properties?</strong>
+                </p>
+            </div>
+            
+            <div class="glass">
+                <p style="color: var(--gold); margin-bottom: 10px;">Why it matters</p>
+                <p style="color: #aaa;">Traditional wine tasting is subjective, expensive, and doesn't scale. Machine learning offers objective assessment.</p>
+            </div>
+
+            <div class="glass">
+                <p style="color: var(--gold);">UCI Wine Quality Dataset</p>
+                <ul>
+                    <li>11 chemical features</li>
+                    <li>Quality scores: 3-9</li>
+                    <li>Zero missing values</li>
+                </ul>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="value">6,497</div>
+                    <div class="label">Samples</div>
+                </div>
+                <div class="stat">
+                    <div class="value" style="background: linear-gradient(135deg, #8b0000, #cd5c5c); -webkit-background-clip: text;">1,599</div>
+                    <div class="label">Red</div>
+                </div>
+                <div class="stat">
+                    <div class="value" style="background: linear-gradient(135deg, #ddd, #fff); -webkit-background-clip: text;">4,898</div>
+                    <div class="label">White</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="photo-frame" onclick="openModal(this)">
+            <img src="redvsw.jpg" alt="Wine Types" data-caption="Distribution of Wine Types">
+            <div class="photo-caption">Count of Red vs White Wines</div>
+            <div class="photo-zoom">🔍 Click to expand</div>
+        </div>
+    </div>
+    <span class="slide-num">02 — 08</span>
+</section>
+
+<!-- 3. EXPLORATION -->
+<section>
+    <h2>📊 Data Exploration</h2>
+    <div class="grid">
+        <div class="photo-frame" onclick="openModal(this)">
+            <img src="quality_dist.png" alt="Quality Distribution" data-caption="Quality Distribution by Wine Type">
+            <div class="photo-caption">Quality Score Distribution</div>
+            <div class="photo-zoom">🔍 Click to expand</div>
+        </div>
+        
+        <div class="photo-frame" onclick="openModal(this)">
+            <img src="corelation_matrix.png" alt="Correlation" data-caption="Feature Correlation Heatmap">
+            <div class="photo-caption">Correlation Matrix</div>
+            <div class="photo-zoom">🔍 Click to expand</div>
+        </div>
+    </div>
+    
+    <div class="glass glass-gold" style="text-align: center; margin-top: 30px;">
+        <span style="color: #7dcea0; font-weight: 600;">▲ Alcohol (+0.44)</span>
+        <span style="color: #888; margin: 0 20px;">increases quality</span>
+        <span style="margin: 0 30px; color: #444;">|</span>
+        <span style="color: #e57373; font-weight: 600;">▼ Density (-0.31)</span>
+        <span style="color: #888; margin-left: 20px;">decreases quality</span>
+    </div>
+    <span class="slide-num">03 — 08</span>
+</section>
+
+<!-- 4. ALGORITHMS -->
+<section>
+    <h2>🤖 Algorithms</h2>
+    <div class="grid">
+        <div>
+            <div class="glass">
+                <p style="color: var(--gold); font-size: 1.1rem; margin-bottom: 20px;">4 Models Implemented</p>
+                <p style="margin: 15px 0; color: #bbb;">📈 <strong>Linear Regression</strong> — baseline</p>
+                <p style="margin: 15px 0; color: #7dcea0;">🌲 <strong>Random Forest</strong> — 100 trees ⭐</p>
+                <p style="margin: 15px 0; color: #bbb;">🎯 <strong>KNN</strong> — K=10 neighbors</p>
+                <p style="margin: 15px 0; color: #bbb;">🌳 <strong>Decision Tree</strong> — max depth 3</p>
+            </div>
+            
+            <div class="glass glass-gold">
+                <p style="color: var(--gold);">Data Split Strategy</p>
+                <p style="color: #aaa; margin-top: 8px;">60% Train • 20% Validation • 20% Test</p>
+            </div>
+        </div>
+        
+        <div>
+            <div class="photo-frame" onclick="openModal(this)" style="margin-bottom: 20px;">
+                <img src="KNN_MS.jpg" alt="KNN" data-caption="KNN: MSE vs K-Value Analysis">
+                <div class="photo-caption">KNN Optimization</div>
+                <div class="photo-zoom">🔍 Click to expand</div>
+            </div>
+            
+            <div class="photo-frame" onclick="openModal(this)">
+                <img src="tree.jpg" alt="Tree" data-caption="Decision Tree Structure">
+                <div class="photo-caption">Decision Tree Visualization</div>
+                <div class="photo-zoom">🔍 Click to expand</div>
+            </div>
+        </div>
+    </div>
+    <span class="slide-num">04 — 08</span>
+</section>
+
+<!-- 5. RESULTS -->
+<section>
+    <h2>📈 Results</h2>
+    <div class="grid">
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>MSE ↓</th>
+                        <th>MAE ↓</th>
+                        <th>R² ↑</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="winner">
+                        <td>🏆 Random Forest</td>
+                        <td>0.360</td>
+                        <td>0.436</td>
+                        <td>0.511</td>
+                    </tr>
+                    <tr>
+                        <td>KNN (K=10)</td>
+                        <td>0.494</td>
+                        <td>0.542</td>
+                        <td>0.357</td>
+                    </tr>
+                    <tr>
+                        <td>Linear Regression</td>
+                        <td>0.505</td>
+                        <td>0.545</td>
+                        <td>0.314</td>
+                    </tr>
+                    <tr>
+                        <td>Decision Tree</td>
+                        <td>0.563</td>
+                        <td>0.593</td>
+                        <td>0.267</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="glass glass-gold" style="border-left-color: #7dcea0;">
+                <p style="color: #7dcea0; font-size: 1.15rem;">🏆 Winner: Random Forest</p>
+                <p style="color: #aaa; margin-top: 10px;">Predictions within half a quality point (MAE = 0.44)</p>
+            </div>
+        </div>
+        
+        <div class="photo-frame" onclick="openModal(this)">
+            <img src="actualvspredicted_RF.jpg" alt="Predictions" data-caption="Actual vs Predicted Wine Quality">
+            <div class="photo-caption">Actual vs Predicted Quality</div>
+            <div class="photo-zoom">🔍 Click to expand</div>
+        </div>
+    </div>
+    <span class="slide-num">05 — 08</span>
+</section>
+
+<!-- 6. FEATURES -->
+<section>
+    <h2>🔑 Feature Importance</h2>
+    <div class="grid">
+        <div class="photo-frame" onclick="openModal(this)">
+            <img src="feature_importance.jpg" alt="Features" data-caption="Random Forest Feature Importance">
+            <div class="photo-caption">Which features matter most?</div>
+            <div class="photo-zoom">🔍 Click to expand</div>
+        </div>
+        
+        <div>
+            <div class="glass">
+                <p style="color: var(--gold); margin-bottom: 15px;">Top Predictors</p>
+                <p style="font-size: 1.3rem; margin: 12px 0;">🥇 Alcohol — <span style="color: var(--gold);">24.8%</span></p>
+                <p style="margin: 12px 0; color: #bbb;">🥈 Volatile Acidity — 12.6%</p>
+                <p style="margin: 12px 0; color: #bbb;">🥉 Free SO₂ — 9.2%</p>
+                <p style="margin-top: 20px; color: #555;">Wine Type — 0.2%</p>
+            </div>
+            
+            <div class="glass glass-gold">
+                <p>💡 <strong>Interesting finding:</strong></p>
+                <p style="color: #aaa; margin-top: 8px;">Wine type barely matters! Same model works for both red & white wines.</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="value" style="font-size: 2rem; background: linear-gradient(135deg, #8b0000, #cd5c5c); -webkit-background-clip: text;">0.40</div>
+                    <div class="label">Red MAE</div>
+                </div>
+                <div class="stat">
+                    <div class="value" style="font-size: 2rem; background: linear-gradient(135deg, #ddd, #fff); -webkit-background-clip: text;">0.45</div>
+                    <div class="label">White MAE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="slide-num">06 — 08</span>
+</section>
+
+<!-- 7. CONCLUSIONS -->
+<section>
+    <h2>✅ Conclusions</h2>
+    <div class="grid">
+        <div>
+            <div class="conclusion-grid">
+                <div class="conclusion-card winner">
+                    <p style="color: #7dcea0; font-weight: 600;">🏆 Best Model</p>
+                    <p style="color: #aaa; margin-top: 5px;">Random Forest (R²=0.51)</p>
+                </div>
+                <div class="conclusion-card">
+                    <p style="color: var(--gold); font-weight: 600;">🍷 Top Feature</p>
+                    <p style="color: #aaa; margin-top: 5px;">Alcohol content (25%)</p>
+                </div>
+                <div class="conclusion-card">
+                    <p style="color: var(--gold); font-weight: 600;">🔄 Unified Model</p>
+                    <p style="color: #aaa; margin-top: 5px;">Works for both wine types</p>
+                </div>
+                <div class="conclusion-card">
+                    <p style="color: var(--gold); font-weight: 600;">📈 Ensemble Power</p>
+                    <p style="color: #aaa; margin-top: 5px;">42% better than single tree</p>
+                </div>
+            </div>
+            
+            <div class="glass glass-gold" style="text-align: center; margin-top: 25px;">
+                <p style="font-size: 1.1rem;">✓ Predictions accurate within <strong>0.5 quality points</strong></p>
+            </div>
+        </div>
+        
+        <div class="photo-frame" onclick="openModal(this)">
+            <img src="errors.jpg" alt="Errors" data-caption="Prediction Errors by Wine Type">
+            <div class="photo-caption">Error Distribution Analysis</div>
+            <div class="photo-zoom">🔍 Click to expand</div>
+        </div>
+    </div>
+    <span class="slide-num">07 — 08</span>
+</section>
+
+<!-- 8. END -->
+<section class="title-section">
+    <div class="wine-glass">🍷</div>
+    <h1>Thank You</h1>
+    <p class="subtitle">Questions?</p>
+    
+    <div class="stats" style="justify-content: center; margin-top: 50px; max-width: 700px; margin-left: auto; margin-right: auto;">
+        <div class="stat" style="border-color: #7dcea0;">
+            <div class="value" style="background: linear-gradient(135deg, #7dcea0, #a8e6cf); -webkit-background-clip: text;">RF</div>
+            <div class="label">Winner</div>
+        </div>
+        <div class="stat">
+            <div class="value">0.44</div>
+            <div class="label">MAE</div>
+        </div>
+        <div class="stat">
+            <div class="value">51%</div>
+            <div class="label">R²</div>
+        </div>
+        <div class="stat">
+            <div class="value">4</div>
+            <div class="label">Models</div>
+        </div>
+    </div>
+    
+    <div class="date-badge" style="margin-top: 60px;">UCI Wine Quality • 6,497 Samples</div>
+    <span class="slide-num">08 — 08</span>
+</section>
+
+<script>
+function openModal(el) {
+    const img = el.querySelector('img');
+    document.getElementById('modal').classList.add('show');
+    document.getElementById('modal-img').src = img.src;
+    document.getElementById('modal-caption').textContent = img.dataset.caption || '';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+
+</body>
+</html>

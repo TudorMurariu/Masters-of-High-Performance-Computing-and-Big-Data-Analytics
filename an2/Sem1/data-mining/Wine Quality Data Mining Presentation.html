@@ -1,0 +1,1264 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Quality Prediction - Data Mining Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .slide {
+            min-height: 100vh;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 3px solid #722f37;
+            position: relative;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(180deg, #722f37, #c9b037);
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 14px;
+            color: #c9b037;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #c9b037, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #c9b037;
+            border-bottom: 3px solid #722f37;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            color: #e8d5b7;
+        }
+
+        p, li {
+            font-size: 1.3em;
+            line-height: 1.8;
+            color: #e0e0e0;
+        }
+
+        ul {
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 12px;
+        }
+
+        .title-slide {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d132c 50%, #1a1a2e 100%);
+        }
+
+        .title-slide h1 {
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            color: #c9b037;
+            margin-bottom: 40px;
+        }
+
+        .wine-icon {
+            font-size: 5em;
+            margin-bottom: 30px;
+        }
+
+        .team-info {
+            margin-top: 50px;
+            font-size: 1.2em;
+            color: #aaa;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        th {
+            background: linear-gradient(90deg, #722f37, #8b3a3a);
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        td {
+            color: #e0e0e0;
+            font-size: 1.1em;
+        }
+
+        tr:hover {
+            background: rgba(201, 176, 55, 0.1);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(114, 47, 55, 0.3), rgba(201, 176, 55, 0.1));
+            border-left: 5px solid #c9b037;
+            padding: 25px 30px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(201, 176, 55, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(201, 176, 55, 0.2);
+        }
+
+        .card h3 {
+            color: #c9b037;
+            margin-top: 0;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #c9b037;
+            display: block;
+            margin: 15px 0;
+        }
+
+        .metric-label {
+            font-size: 1em;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .best-model {
+            background: linear-gradient(135deg, rgba(0, 150, 0, 0.2), rgba(0, 100, 0, 0.3));
+            border: 2px solid #4CAF50;
+        }
+
+        .best-model .metric-value {
+            color: #4CAF50;
+        }
+
+        .algorithm-card {
+            text-align: center;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 25px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .feature-name {
+            width: 180px;
+            font-weight: bold;
+            color: #e8d5b7;
+        }
+
+        .feature-bar {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            height: 30px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .feature-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #722f37, #c9b037);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .conclusion-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+
+        .conclusion-icon {
+            font-size: 2em;
+            margin-right: 20px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(201, 176, 55, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #c9b037;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        .comparison-table {
+            margin-top: 30px;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: bold;
+            color: #c9b037;
+        }
+
+        .winner {
+            background: rgba(76, 175, 80, 0.2) !important;
+        }
+
+        .winner td {
+            color: #4CAF50 !important;
+        }
+
+        .references {
+            font-size: 1em;
+            color: #888;
+        }
+
+        .references li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            color: #c9b037;
+        }
+
+        .quality-dist {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 200px;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .quality-bar {
+            width: 60px;
+            background: linear-gradient(180deg, #c9b037, #722f37);
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .quality-label {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(201, 176, 55, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-dot:hover {
+            background: #c9b037;
+            transform: scale(1.3);
+        }
+
+        .emoji {
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1: Title -->
+    <div class="slide title-slide" id="slide1">
+        <div class="wine-icon">🍷</div>
+        <h1>Wine Quality Prediction</h1>
+        <div class="subtitle">Using Data Mining Algorithms</div>
+        <p style="font-size: 1.4em; color: #e0e0e0;">A Comparative Study of Machine Learning Approaches</p>
+        <div class="team-info">
+            <p>Data Mining Course Project</p>
+            <p style="margin-top: 10px;">January 2026</p>
+        </div>
+        <div class="slide-number">1</div>
+    </div>
+
+    <!-- Slide 2: Agenda -->
+    <div class="slide" id="slide2">
+        <h2>📋 Presentation Agenda</h2>
+        <div class="two-column">
+            <div>
+                <div class="card">
+                    <h3>1. Problem Definition</h3>
+                    <p>Understanding the wine quality prediction challenge</p>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>2. Dataset Description</h3>
+                    <p>UCI Wine Quality Dataset overview and exploration</p>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>3. Data Preprocessing</h3>
+                    <p>Cleaning, transformation, and preparation steps</p>
+                </div>
+            </div>
+            <div>
+                <div class="card">
+                    <h3>4. Algorithms Implementation</h3>
+                    <p>Four data mining algorithms applied</p>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>5. Results Comparison</h3>
+                    <p>Performance metrics and analysis</p>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>6. Conclusions</h3>
+                    <p>Key findings and recommendations</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">2</div>
+    </div>
+
+    <!-- Slide 3: Problem to be Solved -->
+    <div class="slide" id="slide3">
+        <h2>🎯 Problem to be Solved</h2>
+        
+        <h3>Background</h3>
+        <p>Wine quality assessment is traditionally performed by human experts through sensory evaluation, which presents several challenges:</p>
+        
+        <div class="two-column" style="margin-top: 20px;">
+            <div>
+                <div class="highlight-box">
+                    <h3 style="margin-top: 0;">Traditional Challenges</h3>
+                    <ul>
+                        <li><strong>Subjective:</strong> Varies between different tasters</li>
+                        <li><strong>Time-consuming:</strong> Requires trained professionals</li>
+                        <li><strong>Expensive:</strong> Limited scalability for large production</li>
+                        <li><strong>Inconsistent:</strong> Human fatigue affects results</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="highlight-box">
+                    <h3 style="margin-top: 0;">Our Solution</h3>
+                    <ul>
+                        <li><strong>Objective:</strong> Based on measurable chemical properties</li>
+                        <li><strong>Fast:</strong> Instant predictions</li>
+                        <li><strong>Scalable:</strong> Process thousands of samples</li>
+                        <li><strong>Consistent:</strong> Same input = same output</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">3</div>
+    </div>
+
+    <!-- Slide 4: Problem Statement -->
+    <div class="slide" id="slide4">
+        <h2>❓ Problem Statement</h2>
+        
+        <div class="highlight-box" style="text-align: center; padding: 40px;">
+            <p style="font-size: 1.8em; color: #c9b037; font-weight: bold;">
+                "Can we predict wine quality based on physicochemical properties using data mining algorithms?"
+            </p>
+        </div>
+
+        <h3>Project Objectives</h3>
+        <div class="three-column">
+            <div class="card">
+                <h3 style="color: #c9b037;">🔮 Prediction</h3>
+                <p>Predict wine quality scores (3-9) based on 11 chemical attributes</p>
+            </div>
+            <div class="card">
+                <h3 style="color: #c9b037;">⚖️ Comparison</h3>
+                <p>Evaluate and compare multiple data mining algorithms</p>
+            </div>
+            <div class="card">
+                <h3 style="color: #c9b037;">🔍 Analysis</h3>
+                <p>Identify which chemical properties most influence quality</p>
+            </div>
+        </div>
+
+        <h3>Why This Problem Matters</h3>
+        <ul>
+            <li>Supports quality control in wine production</li>
+            <li>Enables objective certification and pricing decisions</li>
+            <li>Applicable to both red and white wine varieties</li>
+        </ul>
+        <div class="slide-number">4</div>
+    </div>
+
+    <!-- Slide 5: Dataset Overview -->
+    <div class="slide" id="slide5">
+        <h2>📊 Dataset Description</h2>
+        
+        <h3>Data Source</h3>
+        <p><strong>UCI Machine Learning Repository - Wine Quality Dataset</strong></p>
+        <p style="font-size: 1em; color: #888;">https://archive.ics.uci.edu/dataset/186/wine+quality</p>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">1,599</div>
+                <div class="stat-label">Red Wine Samples</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">4,898</div>
+                <div class="stat-label">White Wine Samples</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">6,497</div>
+                <div class="stat-label">Total Samples</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Features</div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <p><span class="emoji">✅</span> <strong>No missing values</strong> - Clean dataset ready for modeling</p>
+            <p><span class="emoji">✅</span> <strong>All numerical features</strong> - Suitable for regression algorithms</p>
+            <p><span class="emoji">✅</span> <strong>Combined dataset</strong> - Both red and white wines analyzed together</p>
+        </div>
+        <div class="slide-number">5</div>
+    </div>
+
+    <!-- Slide 6: Features -->
+    <div class="slide" id="slide6">
+        <h2>🧪 Feature Description</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Description</th>
+                    <th>Mean</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Fixed Acidity</td>
+                    <td>Tartaric acid content (g/dm³)</td>
+                    <td>7.22</td>
+                    <td>3.80</td>
+                    <td>15.90</td>
+                </tr>
+                <tr>
+                    <td>Volatile Acidity</td>
+                    <td>Acetic acid content (g/dm³)</td>
+                    <td>0.34</td>
+                    <td>0.08</td>
+                    <td>1.58</td>
+                </tr>
+                <tr>
+                    <td>Citric Acid</td>
+                    <td>Citric acid content (g/dm³)</td>
+                    <td>0.32</td>
+                    <td>0.00</td>
+                    <td>1.66</td>
+                </tr>
+                <tr>
+                    <td>Residual Sugar</td>
+                    <td>Sugar remaining (g/dm³)</td>
+                    <td>5.44</td>
+                    <td>0.60</td>
+                    <td>65.80</td>
+                </tr>
+                <tr>
+                    <td>Chlorides</td>
+                    <td>Sodium chloride content (g/dm³)</td>
+                    <td>0.056</td>
+                    <td>0.009</td>
+                    <td>0.611</td>
+                </tr>
+                <tr>
+                    <td>Free SO₂</td>
+                    <td>Free sulfur dioxide (mg/dm³)</td>
+                    <td>30.53</td>
+                    <td>1.00</td>
+                    <td>289.00</td>
+                </tr>
+                <tr>
+                    <td>Total SO₂</td>
+                    <td>Total sulfur dioxide (mg/dm³)</td>
+                    <td>115.74</td>
+                    <td>6.00</td>
+                    <td>440.00</td>
+                </tr>
+                <tr>
+                    <td>Density</td>
+                    <td>Density of wine (g/cm³)</td>
+                    <td>0.995</td>
+                    <td>0.987</td>
+                    <td>1.039</td>
+                </tr>
+                <tr>
+                    <td>pH</td>
+                    <td>Acidity level (0-14 scale)</td>
+                    <td>3.22</td>
+                    <td>2.72</td>
+                    <td>4.01</td>
+                </tr>
+                <tr>
+                    <td>Sulphates</td>
+                    <td>Potassium sulphate (g/dm³)</td>
+                    <td>0.53</td>
+                    <td>0.22</td>
+                    <td>2.00</td>
+                </tr>
+                <tr>
+                    <td>Alcohol</td>
+                    <td>Alcohol percentage (% vol)</td>
+                    <td>10.49</td>
+                    <td>8.00</td>
+                    <td>14.90</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p><strong>Target Variable:</strong> Quality score (3-9) based on sensory evaluation by wine experts</p>
+        <div class="slide-number">6</div>
+    </div>
+
+    <!-- Slide 7: Quality Distribution -->
+    <div class="slide" id="slide7">
+        <h2>📈 Quality Score Distribution</h2>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Quality Score</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>5</th>
+                    <th>6</th>
+                    <th>7</th>
+                    <th>8</th>
+                    <th>9</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Red Wine</td>
+                    <td>10</td>
+                    <td>53</td>
+                    <td>681</td>
+                    <td>638</td>
+                    <td>199</td>
+                    <td>18</td>
+                    <td>0</td>
+                    <td>1,599</td>
+                </tr>
+                <tr>
+                    <td>White Wine</td>
+                    <td>20</td>
+                    <td>163</td>
+                    <td>1,457</td>
+                    <td>2,198</td>
+                    <td>880</td>
+                    <td>175</td>
+                    <td>5</td>
+                    <td>4,898</td>
+                </tr>
+                <tr style="background: rgba(201, 176, 55, 0.1);">
+                    <td><strong>Total</strong></td>
+                    <td><strong>30</strong></td>
+                    <td><strong>216</strong></td>
+                    <td><strong>2,138</strong></td>
+                    <td><strong>2,836</strong></td>
+                    <td><strong>1,079</strong></td>
+                    <td><strong>193</strong></td>
+                    <td><strong>5</strong></td>
+                    <td><strong>6,497</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Key Observations</h3>
+        <div class="two-column">
+            <div class="highlight-box">
+                <p><span class="emoji">⚠️</span> <strong>Imbalanced Classes:</strong> 76.6% of wines rated 5 or 6</p>
+                <p><span class="emoji">📉</span> <strong>Rare Extremes:</strong> Very few wines rated 3, 8, or 9</p>
+            </div>
+            <div class="highlight-box">
+                <p><span class="emoji">🍾</span> <strong>White Dominance:</strong> 75.4% white wine samples</p>
+                <p><span class="emoji">📊</span> <strong>Mean Quality:</strong> 5.82 (slightly above average)</p>
+            </div>
+        </div>
+        <div class="slide-number">7</div>
+    </div>
+
+    <!-- Slide 8: Correlation Analysis -->
+    <div class="slide" id="slide8">
+        <h2>🔗 Correlation with Quality</h2>
+        
+        <div class="two-column">
+            <div>
+                <h3 style="color: #4CAF50;">Positive Correlations</h3>
+                <div class="feature-item">
+                    <span class="feature-name">Alcohol</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A);">0.444</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-name">Citric Acid</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 19%; background: linear-gradient(90deg, #4CAF50, #8BC34A);">0.086</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-name">Free SO₂</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 12%; background: linear-gradient(90deg, #4CAF50, #8BC34A);">0.055</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-name">Sulphates</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 9%; background: linear-gradient(90deg, #4CAF50, #8BC34A);">0.038</div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 style="color: #f44336;">Negative Correlations</h3>
+                <div class="feature-item">
+                    <span class="feature-name">Density</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 69%; background: linear-gradient(90deg, #f44336, #ff7043);">-0.306</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-name">Volatile Acidity</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 60%; background: linear-gradient(90deg, #f44336, #ff7043);">-0.266</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-name">Chlorides</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 45%; background: linear-gradient(90deg, #f44336, #ff7043);">-0.201</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-name">Fixed Acidity</span>
+                    <div class="feature-bar">
+                        <div class="feature-fill" style="width: 17%; background: linear-gradient(90deg, #f44336, #ff7043);">-0.077</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 30px;">
+            <p><span class="emoji">💡</span> <strong>Key Insight:</strong> Alcohol content has the strongest positive correlation with quality (0.444), while density shows the strongest negative correlation (-0.306)</p>
+        </div>
+        <div class="slide-number">8</div>
+    </div>
+
+    <!-- Slide 9: Data Preprocessing -->
+    <div class="slide" id="slide9">
+        <h2>⚙️ Data Preprocessing</h2>
+        
+        <div class="three-column">
+            <div class="card">
+                <h3>1. Data Loading</h3>
+                <ul>
+                    <li>Combined red and white wine CSV files</li>
+                    <li>Added wine_type column</li>
+                    <li>Verified data integrity</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>2. Feature Engineering</h3>
+                <ul>
+                    <li>Encoded wine_type (type_white)</li>
+                    <li>Total of 12 features</li>
+                    <li>Target: quality score</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>3. Data Splitting</h3>
+                <ul>
+                    <li>Training: 60% (3,897)</li>
+                    <li>Validation: 20% (1,300)</li>
+                    <li>Test: 20% (1,300)</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Feature Scaling</h3>
+        <div class="highlight-box">
+            <p><strong>StandardScaler applied</strong> - Features normalized to zero mean and unit variance</p>
+            <p style="margin-top: 10px;">This ensures all features contribute equally regardless of their original scale</p>
+        </div>
+
+        <h3>Data Split Distribution</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Split</th>
+                    <th>Samples</th>
+                    <th>White Wine %</th>
+                    <th>Red Wine %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Training</td>
+                    <td>3,897</td>
+                    <td>75.4%</td>
+                    <td>24.6%</td>
+                </tr>
+                <tr>
+                    <td>Validation</td>
+                    <td>1,300</td>
+                    <td>75.4%</td>
+                    <td>24.6%</td>
+                </tr>
+                <tr>
+                    <td>Test</td>
+                    <td>1,300</td>
+                    <td>75.4%</td>
+                    <td>24.6%</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="slide-number">9</div>
+    </div>
+
+    <!-- Slide 10: Algorithms Overview -->
+    <div class="slide" id="slide10">
+        <h2>🤖 Algorithms Implemented</h2>
+        
+        <div class="two-column">
+            <div class="card algorithm-card">
+                <h3>📈 Linear Regression</h3>
+                <p>Simple baseline model that finds linear relationships between features and quality</p>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>Fast training</li>
+                    <li>Interpretable coefficients</li>
+                    <li>Assumes linear relationships</li>
+                </ul>
+            </div>
+            <div class="card algorithm-card">
+                <h3>🌲 Random Forest</h3>
+                <p>Ensemble of 100 decision trees with bootstrap aggregating</p>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>Handles non-linear relationships</li>
+                    <li>Feature importance ranking</li>
+                    <li>Robust to overfitting</li>
+                </ul>
+            </div>
+            <div class="card algorithm-card">
+                <h3>🎯 K-Nearest Neighbors</h3>
+                <p>Instance-based learning with K=10 neighbors</p>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>No training phase</li>
+                    <li>Non-parametric method</li>
+                    <li>Sensitive to feature scaling</li>
+                </ul>
+            </div>
+            <div class="card algorithm-card">
+                <h3>🌳 Decision Tree</h3>
+                <p>Single tree model for interpretable decision rules</p>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>Easy to interpret</li>
+                    <li>Visual representation</li>
+                    <li>Prone to overfitting</li>
+                </ul>
+            </div>
+        </div>
+        <div class="slide-number">10</div>
+    </div>
+
+    <!-- Slide 11: Results Comparison -->
+    <div class="slide" id="slide11">
+        <h2>📊 Results Comparison</h2>
+        
+        <h3>Test Set Performance (Final Evaluation)</h3>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>MSE ↓</th>
+                    <th>MAE ↓</th>
+                    <th>R² ↑</th>
+                    <th>Rank</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="winner">
+                    <td>🥇 Random Forest</td>
+                    <td><strong>0.3599</strong></td>
+                    <td><strong>0.4357</strong></td>
+                    <td><strong>0.5108</strong></td>
+                    <td>1st</td>
+                </tr>
+                <tr>
+                    <td>🥈 KNN (K=10)</td>
+                    <td>0.4938</td>
+                    <td>0.5416</td>
+                    <td>0.3572</td>
+                    <td>2nd</td>
+                </tr>
+                <tr>
+                    <td>🥉 Linear Regression</td>
+                    <td>0.5046</td>
+                    <td>0.5451</td>
+                    <td>0.3143</td>
+                    <td>3rd</td>
+                </tr>
+                <tr>
+                    <td>Decision Tree</td>
+                    <td>0.5628</td>
+                    <td>0.5928</td>
+                    <td>0.2674</td>
+                    <td>4th</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #4CAF50;">🏆 Best Model: Random Forest</h3>
+            <p><strong>MAE = 0.4357</strong> means predictions are off by less than half a quality point on average</p>
+            <p><strong>R² = 0.5108</strong> means the model explains 51% of the variance in wine quality</p>
+        </div>
+        <div class="slide-number">11</div>
+    </div>
+
+    <!-- Slide 12: Performance Metrics Explanation -->
+    <div class="slide" id="slide12">
+        <h2>📏 Performance Metrics Explained</h2>
+        
+        <div class="three-column">
+            <div class="card">
+                <h3>MSE</h3>
+                <p><strong>Mean Squared Error</strong></p>
+                <p style="margin-top: 15px;">Average of squared differences between predicted and actual values</p>
+                <p style="margin-top: 10px; color: #c9b037;">Lower is better ↓</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #888;">Penalizes large errors more heavily</p>
+            </div>
+            <div class="card">
+                <h3>MAE</h3>
+                <p><strong>Mean Absolute Error</strong></p>
+                <p style="margin-top: 15px;">Average absolute difference between predicted and actual values</p>
+                <p style="margin-top: 10px; color: #c9b037;">Lower is better ↓</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #888;">Easy to interpret in original units</p>
+            </div>
+            <div class="card">
+                <h3>R²</h3>
+                <p><strong>Coefficient of Determination</strong></p>
+                <p style="margin-top: 15px;">Proportion of variance in quality explained by the model</p>
+                <p style="margin-top: 10px; color: #c9b037;">Higher is better ↑</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #888;">Range: 0 to 1 (1 = perfect)</p>
+            </div>
+        </div>
+
+        <h3>Why Random Forest Won</h3>
+        <ul>
+            <li><strong>Lowest MSE (0.3599):</strong> Fewer large prediction errors</li>
+            <li><strong>Lowest MAE (0.4357):</strong> Best average prediction accuracy</li>
+            <li><strong>Highest R² (0.5108):</strong> Explains most variance in quality scores</li>
+        </ul>
+        <div class="slide-number">12</div>
+    </div>
+
+    <!-- Slide 13: Feature Importance -->
+    <div class="slide" id="slide13">
+        <h2>🔑 Feature Importance (Random Forest)</h2>
+        
+        <div class="feature-item">
+            <span class="feature-name">Alcohol</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 100%;">24.8%</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-name">Volatile Acidity</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 51%;">12.6%</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-name">Free SO₂</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 37%;">9.2%</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-name">Sulphates</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 32%;">7.9%</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-name">Total SO₂</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 29%;">7.2%</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-name">Residual Sugar</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 29%;">7.1%</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-name">pH</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 27%;">6.8%</div>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-name" style="color: #888;">Wine Type</span>
+            <div class="feature-bar">
+                <div class="feature-fill" style="width: 1%; background: #888;">0.16%</div>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 20px;">
+            <p><span class="emoji">💡</span> <strong>Key Finding:</strong> Wine type (red/white) has negligible importance (0.16%), confirming that a unified model works for both wine types!</p>
+        </div>
+        <div class="slide-number">13</div>
+    </div>
+
+    <!-- Slide 14: Wine Type Analysis -->
+    <div class="slide" id="slide14">
+        <h2>🍷 Performance by Wine Type</h2>
+        
+        <div class="two-column">
+            <div class="card" style="text-align: center;">
+                <h3 style="color: #722f37;">🔴 Red Wine</h3>
+                <span class="metric-value" style="color: #722f37;">0.4023</span>
+                <span class="metric-label">Mean Absolute Error</span>
+                <p style="margin-top: 20px;">Slightly better predictions for red wine</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3 style="color: #c9b037;">⚪ White Wine</h3>
+                <span class="metric-value">0.4466</span>
+                <span class="metric-label">Mean Absolute Error</span>
+                <p style="margin-top: 20px;">Comparable performance despite larger sample size</p>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 40px;">
+            <h3 style="margin-top: 0;">Business Implication</h3>
+            <p>The model performs consistently well on both wine types, enabling a <strong>unified quality control system</strong> for wineries producing both red and white wines.</p>
+        </div>
+
+        <h3>Why Red Wine Has Slightly Better Predictions</h3>
+        <ul>
+            <li>Red wine quality distribution is more concentrated around scores 5-6</li>
+            <li>Fewer extreme values in the red wine dataset</li>
+            <li>Chemical properties may have clearer relationships with quality in red wines</li>
+        </ul>
+        <div class="slide-number">14</div>
+    </div>
+
+    <!-- Slide 15: Conclusions -->
+    <div class="slide" id="slide15">
+        <h2>✅ Conclusions</h2>
+        
+        <div class="conclusion-item">
+            <div class="conclusion-icon">🏆</div>
+            <div>
+                <h3 style="margin-top: 0;">Best Algorithm: Random Forest</h3>
+                <p>Achieved the best performance across all metrics (MSE: 0.3599, MAE: 0.4357, R²: 0.5108), outperforming Linear Regression, KNN, and Decision Tree.</p>
+            </div>
+        </div>
+
+        <div class="conclusion-item">
+            <div class="conclusion-icon">🍷</div>
+            <div>
+                <h3 style="margin-top: 0;">Alcohol is the Key Predictor</h3>
+                <p>With 24.8% feature importance, alcohol content is the most significant factor in determining wine quality, followed by volatile acidity (12.6%).</p>
+            </div>
+        </div>
+
+        <div class="conclusion-item">
+            <div class="conclusion-icon">🔄</div>
+            <div>
+                <h3 style="margin-top: 0;">Unified Model Works</h3>
+                <p>Wine type has negligible importance (0.16%), confirming that a single model can effectively predict quality for both red and white wines.</p>
+            </div>
+        </div>
+
+        <div class="conclusion-item">
+            <div class="conclusion-icon">📊</div>
+            <div>
+                <h3 style="margin-top: 0;">Ensemble Methods Excel</h3>
+                <p>Random Forest (ensemble) significantly outperformed single models like Decision Tree, demonstrating the power of combining multiple weak learners.</p>
+            </div>
+        </div>
+        <div class="slide-number">15</div>
+    </div>
+
+    <!-- Slide 16: Summary -->
+    <div class="slide" id="slide16">
+        <h2>📋 Project Summary</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">6,497</div>
+                <div class="stat-label">Wine Samples</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Algorithms Tested</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Performance Metrics</div>
+            </div>
+            <div class="stat-box best-model">
+                <div class="stat-number">51%</div>
+                <div class="stat-label">Best R² Score</div>
+            </div>
+        </div>
+
+        <h3>Algorithm Ranking</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Algorithm</th>
+                    <th>MAE</th>
+                    <th>R²</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="winner">
+                    <td>1st 🥇</td>
+                    <td>Random Forest</td>
+                    <td>0.4357</td>
+                    <td>0.5108</td>
+                </tr>
+                <tr>
+                    <td>2nd 🥈</td>
+                    <td>K-Nearest Neighbors</td>
+                    <td>0.5416</td>
+                    <td>0.3572</td>
+                </tr>
+                <tr>
+                    <td>3rd 🥉</td>
+                    <td>Linear Regression</td>
+                    <td>0.5451</td>
+                    <td>0.3143</td>
+                </tr>
+                <tr>
+                    <td>4th</td>
+                    <td>Decision Tree</td>
+                    <td>0.5928</td>
+                    <td>0.2674</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="slide-number">16</div>
+    </div>
+
+    <!-- Slide 17: Future Work & References -->
+    <div class="slide" id="slide17">
+        <h2>🔮 Future Work & References</h2>
+        
+        <div class="two-column">
+            <div>
+                <h3>Potential Improvements</h3>
+                <ul>
+                    <li>Address class imbalance with oversampling techniques (SMOTE)</li>
+                    <li>Try gradient boosting methods (XGBoost, LightGBM)</li>
+                    <li>Hyperparameter tuning with cross-validation</li>
+                    <li>Feature engineering (polynomial features, interactions)</li>
+                    <li>Convert to classification problem (Low/Medium/High quality)</li>
+                </ul>
+            </div>
+            <div>
+                <h3>References</h3>
+                <ul class="references">
+                    <li>Cortez, P., et al. "Modeling wine preferences by data mining from physicochemical properties." Decision Support Systems, 2009.</li>
+                    <li>UCI Machine Learning Repository - Wine Quality Dataset</li>
+                    <li>Scikit-learn Documentation - Machine Learning in Python</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 40px; text-align: center;">
+            <h3 style="margin-top: 0;">Dataset URL</h3>
+            <p style="font-family: monospace; color: #c9b037;">https://archive.ics.uci.edu/dataset/186/wine+quality</p>
+        </div>
+        <div class="slide-number">17</div>
+    </div>
+
+    <!-- Slide 18: Thank You -->
+    <div class="slide title-slide" id="slide18">
+        <div class="wine-icon">🍷</div>
+        <h1>Thank You!</h1>
+        <div class="subtitle">Questions & Discussion</div>
+        <p style="font-size: 1.4em; color: #e0e0e0; margin-top: 30px;">Wine Quality Prediction Using Data Mining</p>
+        <div class="team-info">
+            <p>Data Mining Course Project • January 2026</p>
+        </div>
+        <div class="slide-number">18</div>
+    </div>
+
+    <!-- Navigation dots -->
+    <div class="nav-dots">
+        <div class="nav-dot" onclick="document.getElementById('slide1').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide2').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide3').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide4').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide5').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide6').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide7').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide8').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide9').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide10').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide11').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide12').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide13').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide14').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide15').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide16').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide17').scrollIntoView({behavior: 'smooth'})"></div>
+        <div class="nav-dot" onclick="document.getElementById('slide18').scrollIntoView({behavior: 'smooth'})"></div>
+    </div>
+
+</body>
+</html>
