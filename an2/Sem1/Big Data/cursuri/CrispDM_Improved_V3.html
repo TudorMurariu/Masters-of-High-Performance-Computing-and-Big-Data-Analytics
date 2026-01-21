@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRISP-DM Process Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Bosch Color Palette - Mild Version */
+        :root {
+            --bosch-red: #EE6A6A;         /* Softened red */
+            --bosch-dark-red: #C06060;    /* Softened dark red */
+            --bosch-gray: #707478;        /* Lightened gray */
+            --bosch-light-gray: #E8E8E8;  /* Softened light gray */
+            --bosch-black: #333333;       /* Softened black */
+            --bosch-white: #FFFFFF;       /* White stays the same */
+            --bosch-highlight: #6A99C0;   /* Softened blue highlight */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--bosch-gray);
+            background: var(--bosch-light-gray);
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bosch-white);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bosch-black);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .sidebar h2 {
+            color: var(--bosch-white);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--bosch-red);
+            padding-bottom: 1rem;
+        }
+
+        .nav-section {
+            margin-bottom: 1rem;
+        }
+
+        .nav-section-title {
+            color: var(--bosch-red);
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(234, 0, 22, 0.1);
+            border-left-color: var(--bosch-red);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: rgba(234, 0, 22, 0.2);
+            border-left-color: var(--bosch-red);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 3rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+            transition: all 0.5s ease;
+        }
+
+        .section:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--bosch-black);
+            color: var(--bosch-white);
+            border-radius: 10px;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--bosch-red);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            color: var(--bosch-white);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+        }
+
+        h2 {
+            color: var(--bosch-red);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--bosch-light-gray);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--bosch-black);
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .phase-card {
+            background: var(--bosch-white);
+            border-radius: 10px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--bosch-red);
+            transition: all 0.3s ease;
+        }
+
+        .phase-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .phase-header-container h2 {
+            margin: 0;
+            flex: 1;
+        }
+
+        .phase-card .phase-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--bosch-white);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .phase-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .phase-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bosch-red);
+            z-index: -1;
+        }
+
+        .business-understanding { background: var(--bosch-red); }
+        .data-understanding { background: var(--bosch-red); }
+        .data-preparation { background: var(--bosch-red); }
+        .modeling { background: var(--bosch-red); }
+        .evaluation { background: var(--bosch-red); }
+        .deployment { background: var(--bosch-red); }
+
+        .key-points {
+            margin: 2rem 0;
+        }
+
+        .point-card {
+            background: var(--bosch-white);
+            color: var(--bosch-gray);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+            border: 1px solid var(--bosch-light-gray);
+            border-left: 4px solid var(--bosch-red);
+        }
+
+        .point-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .collapsible {
+            background-color: var(--bosch-light-gray);
+            color: var(--bosch-black);
+            cursor: pointer;
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: 0.4s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .collapsible:hover {
+            background-color: #ccc;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: var(--bosch-red);
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+            font-size: 1.2rem;
+        }
+
+        .active-collapsible:after {
+            content: "\2212";
+        }
+
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: var(--bosch-white);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .process-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .flow-step {
+            background: var(--bosch-white);
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--bosch-black);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            border: 2px solid var(--bosch-red);
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -30px;
+            font-size: 2rem;
+            color: var(--bosch-red);
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .benefit-item {
+            background: var(--bosch-white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--bosch-light-gray);
+            border-top: 4px solid var(--bosch-red);
+        }
+
+        .benefit-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                overflow-x: hidden;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 2rem;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .process-flow {
+                flex-direction: column;
+            }
+            .flow-step::after {
+                content: '↓';
+                right: auto;
+                bottom: -30px;
+            }
+            .mapping-visual {
+                grid-template-columns: 1fr;
+            }
+            .role-definitions {
+                grid-template-columns: 1fr;
+            }
+            .matrix-container {
+                font-size: 0.8rem;
+                overflow-x: scroll;
+            }
+            .competency-table th,
+            .competency-table td {
+                padding: 0.5rem;
+            }
+            .phase-header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .phase-header-container h2 {
+                margin-bottom: 1rem;
+            }
+            .motivation-points {
+                grid-template-columns: 1fr;
+            }
+            .key-points {
+                grid-template-columns: 1fr;
+            }
+            .home-grid {
+                grid-template-columns: 1fr;
+            }
+            .home-additional {
+                grid-template-columns: 1fr;
+            }
+            .phase-card {
+                padding: 1.5rem;
+            }
+        }
+
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+
+        .highlight {
+            background: var(--bosch-red);
+            color: var(--bosch-white);
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+        }
+
+        /* Roles and Competencies Styles */
+        .roles-mapping {
+            background: var(--bosch-white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+
+        .mapping-visual {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .phase-column {
+            background: var(--bosch-white);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 2px solid var(--bosch-light-gray);
+            transition: all 0.3s ease;
+        }
+
+        .phase-column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--bosch-red);
+        }
+
+        .phase-header {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            color: var(--bosch-black);
+            background-color: var(--bosch-light-gray);
+        }
+
+        .phase-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--bosch-black);
+        }
+
+        .phase-header .phase-icon {
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+        }
+
+        .roles-list {
+            margin-bottom: 1.5rem;
+        }
+
+        .role-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .role-item.primary {
+            background: var(--bosch-light-gray);
+            color: var(--bosch-black);
+        }
+
+        .role-item.secondary {
+            background: var(--bosch-light-gray);
+            color: var(--bosch-black);
+        }
+
+        .role-item:hover {
+            transform: scale(1.05);
+        }
+
+        .role-item .role-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .role-info strong {
+            display: block;
+            font-size: 1rem;
+        }
+
+        .role-info small {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .competencies h4 {
+            color: var(--bosch-black);
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .comp-tag {
+            display: inline-block;
+            background: var(--bosch-red);
+            color: var(--bosch-white);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+            font-weight: 500;
+        }
+
+        .importance-text {
+            color: var(--bosch-red);
+            font-weight: bold;
+        }
+
+        .motivation-section {
+            background: var(--bosch-white);
+            border-radius: 10px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--bosch-red);
+        }
+
+        .motivation-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .motivation-card {
+            background: var(--bosch-white);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid var(--bosch-light-gray);
+            border-top: 4px solid var(--bosch-red);
+        }
+
+        .motivation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .motivation-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .motivation-card h3 {
+            color: var(--bosch-black);
+            margin: 1rem 0;
+            font-size: 1.3rem;
+        }
+
+        .motivation-card p {
+            color: var(--bosch-gray);
+            line-height: 1.6;
+        }
+
+        .crisp-dm-diagram {
+            text-align: center;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: var(--bosch-white);
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--bosch-red);
+        }
+
+        .crisp-dm-diagram img {
+            max-width: 50%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .crisp-dm-diagram img:hover {
+            transform: scale(1.02);
+        }
+
+        .diagram-caption {
+            margin-top: 1.5rem;
+            font-style: italic;
+            color: var(--bosch-gray);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .home-phases {
+            background: var(--bosch-white);
+            border-radius: 10px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .home-additional {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .home-phase-card {
+            background: var(--bosch-white);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid var(--bosch-light-gray);
+            border-top: 4px solid var(--bosch-red);
+        }
+
+        .home-phase-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .home-phase-card .phase-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--bosch-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home-phase-card h3 {
+            color: var(--bosch-black);
+            margin: 1rem 0;
+            font-size: 1.3rem;
+        }
+
+        .home-phase-card p {
+            color: var(--bosch-gray);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .roles-summary {
+            margin: 3rem 0;
+        }
+
+        .role-definitions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .role-def-card {
+            background: var(--bosch-white);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--bosch-red);
+            transition: all 0.3s ease;
+        }
+
+        .role-def-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .role-def-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .role-def-header .role-icon {
+            font-size: 1.8rem;
+            margin-right: 1rem;
+        }
+
+        .role-def-header h4 {
+            color: var(--bosch-black);
+            margin: 0;
+        }
+
+        .role-def-card p {
+            margin: 0.8rem 0;
+            line-height: 1.5;
+        }
+
+        .competency-matrix {
+            margin: 3rem 0;
+        }
+
+        .matrix-container {
+            overflow-x: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .competency-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bosch-white);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .competency-table th {
+            background: var(--bosch-black);
+            color: var(--bosch-white);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .competency-table td {
+            padding: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid var(--bosch-light-gray);
+        }
+
+        .competency-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            background: var(--bosch-light-gray);
+        }
+
+        .competency-table .high {
+            background: var(--bosch-red);
+            color: var(--bosch-white);
+            font-weight: bold;
+            border-radius: 6px;
+        }
+
+        .competency-table .medium {
+            background: var(--bosch-gray);
+            color: var(--bosch-white);
+            font-weight: bold;
+            border-radius: 6px;
+        }
+
+        .competency-table .low {
+            background: var(--bosch-light-gray);
+            color: var(--bosch-black);
+            font-weight: bold;
+            border-radius: 6px;
+        }
+
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 200;
+            background: var(--bosch-red);
+            color: var(--bosch-white);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .documentation-link {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background-color: var(--bosch-red);
+            color: var(--bosch-white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .documentation-link:hover {
+            background-color: var(--bosch-dark-red);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        .doc-link-container {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bosch-light-gray);
+            border-radius: 8px;
+        }
+
+        .doc-link-container p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+        	
+		/* Fix for red backgrounds in roles-competencies section */
+		#roles-competencies h2,
+		#roles-competencies > p,
+		#roles-competencies > .roles-mapping > p {
+			background-color: transparent !important;
+			color: var(--bosch-red) !important;
+			padding: 10px 0 !important;
+		}
+
+		#roles-competencies h2 {
+			color: var(--bosch-red) !important;
+			background-color: white !important;
+		}
+		
+		/* Fix for the roles and competencies section */
+        #roles-competencies > p {
+            background-color: var(--bosch-white) !important;
+            color: var(--bosch-gray) !important;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body class="smooth-scroll">
+    <button class="menu-toggle" id="menuToggle">☰ Menu</button>
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <h2>CRISP-DM</h2>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Introduction</div>
+                <a href="#home" class="nav-item">🏠 Home</a>
+                <a href="#overview" class="nav-item">Overview</a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Process Phases</div>
+                <a href="#business-understanding" class="nav-item">1. Business Understanding</a>
+                <a href="#data-understanding" class="nav-item">2. Data Understanding</a>
+                <a href="#data-preparation" class="nav-item">3. Data Preparation</a>
+                <a href="#modeling" class="nav-item">4. Modeling</a>
+                <a href="#evaluation" class="nav-item">5. Evaluation</a>
+                <a href="#deployment" class="nav-item">6. Deployment</a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Implementation</div>
+                <a href="#roles-competencies" class="nav-item">Roles & Competencies</a>
+                <a href="#benefits" class="nav-item">Benefits</a>
+                <a href="#conclusion" class="nav-item">Conclusion</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <section id="home" class="section">
+                <div class="hero">
+                    <h1>CRISP-DM</h1>
+                    <p>Cross-Industry Standard Process for Data Mining</p>
+                </div>
+
+                <div class="home-phases">
+                    <h2>Explore the CRISP-DM Process</h2>
+                    <p>Navigate through the six phases of CRISP-DM by clicking on any section in the sidebar or the phase cards below.</p>
+                    
+                    <div class="home-grid">
+                        <div class="home-phase-card" data-section="business-understanding">
+                            <div class="phase-icon business-understanding">🎯</div>
+                            <h3>Business Understanding</h3>
+                            <p>Define objectives and understand business requirements</p>
+                        </div>
+                        <div class="home-phase-card" data-section="data-understanding">
+                            <div class="phase-icon data-understanding">📊</div>
+                            <h3>Data Understanding</h3>
+                            <p>Collect, explore, and assess data quality</p>
+                        </div>
+                        <div class="home-phase-card" data-section="data-preparation">
+                            <div class="phase-icon data-preparation">🛠️</div>
+                            <h3>Data Preparation</h3>
+                            <p>Clean, transform, and prepare data for modeling</p>
+                        </div>
+                        <div class="home-phase-card" data-section="modeling">
+                            <div class="phase-icon modeling">🧠</div>
+                            <h3>Modeling</h3>
+                            <p>Select techniques, build, and assess models</p>
+                        </div>
+                        <div class="home-phase-card" data-section="evaluation">
+                            <div class="phase-icon evaluation">✅</div>
+                            <h3>Evaluation</h3>
+                            <p>Evaluate results against business objectives</p>
+                        </div>
+                        <div class="home-phase-card" data-section="deployment">
+                            <div class="phase-icon deployment">🚀</div>
+                            <h3>Deployment</h3>
+                            <p>Deploy models and monitor performance</p>
+                        </div>
+                    </div>
+
+                    <div class="home-additional">
+                        <div class="home-phase-card" data-section="roles-competencies">
+                            <div class="phase-icon" style="background: var(--bosch-black);">👥</div>
+                            <h3>Roles & Competencies</h3>
+                            <p>Team roles and technical skills for each phase</p>
+                        </div>
+                        <div class="home-phase-card" data-section="benefits">
+                            <div class="phase-icon" style="background: var(--bosch-gray);">⭐</div>
+                            <h3>Benefits</h3>
+                            <p>Why CRISP-DM is effective for data science projects</p>
+                        </div>
+                    </div>
+                    
+                    <div class="doc-link-container">
+                        <p>Looking for the complete CRISP-DM documentation?</p>
+                        <a href="https://www.ibm.com/docs/en/spss-modeler/saas?topic=guide-introduction-crisp-dm" target="_blank" class="documentation-link">
+                            Access IBM's Complete CRISP-DM Guide
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="overview" class="section" style="display: none;">
+                <div class="hero">
+                    <h1>CRISP-DM</h1>
+                    <p>Cross-Industry Standard Process for Data Mining</p>
+                </div>
+
+                <div class="motivation-section">
+                    <h2>Why Follow a Structured Process?</h2>
+                    <p>Data science projects have a notoriously high failure rate, with studies showing that <strong>60-85% of data science projects fail to deliver business value</strong>. The primary reasons include unclear objectives, poor data quality, inadequate business alignment, and lack of proper project management.</p>
+                    
+                    <div class="motivation-points">
+                        <div class="motivation-card">
+                            <div class="motivation-icon">🎯</div>
+                            <h3>Business Alignment</h3>
+                            <p>Ensures technical work directly addresses real business problems and delivers measurable value rather than impressive but irrelevant models.</p>
+                        </div>
+                        <div class="motivation-card">
+                            <div class="motivation-icon">🛡️</div>
+                            <h3>Risk Mitigation</h3>
+                            <p>Identifies potential issues early in the project lifecycle, preventing costly mistakes and scope creep that often derail data science initiatives.</p>
+                        </div>
+                        <div class="motivation-card">
+                            <div class="motivation-icon">📈</div>
+                            <h3>Higher Success Rate</h3>
+                            <p>Teams using structured methodologies like CRISP-DM report 2-3x higher project success rates and significantly shorter time-to-deployment.</p>
+                        </div>
+                        <div class="motivation-card">
+                            <div class="motivation-icon">🤝</div>
+                            <h3>Stakeholder Communication</h3>
+                            <p>Provides a common language between technical teams and business stakeholders, improving collaboration and expectation management.</p>
+                        </div>
+                        <div class="motivation-card">
+                            <div class="motivation-icon">🔄</div>
+                            <h3>Iterative Improvement</h3>
+                            <p>Built-in evaluation and review cycles enable continuous learning and adaptation throughout the project lifecycle.</p>
+                        </div>
+                        <div class="motivation-card">
+                            <div class="motivation-icon">📚</div>
+                            <h3>Knowledge Transfer</h3>
+                            <p>Systematic documentation and standardized approach facilitate team onboarding and project handovers.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>What is CRISP-DM?</h2>
+                <p>CRISP-DM is a robust and well-established methodology for conducting data mining projects. Developed in the late 1990s by a consortium including IBM, SPSS, and others, it provides a structured approach to planning and executing data science projects across various industries.</p>
+
+                <div class="crisp-dm-diagram">
+                    <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*JYbymHifAk7aQ1pHm_IdMQ.png" alt="CRISP-DM Process Diagram showing the six phases: Business Understanding, Data Understanding, Data Preparation, Modeling, Evaluation, and Deployment in a cyclical flow" />
+                    <p class="diagram-caption">The CRISP-DM methodology illustrates the iterative nature of data science projects, where phases can be revisited as new insights emerge.</p>
+                </div>
+
+                <div class="process-flow">
+                    <div class="flow-step">Business</div>
+                    <div class="flow-step">Data</div>
+                    <div class="flow-step">Prepare</div>
+                    <div class="flow-step">Model</div>
+                    <div class="flow-step">Evaluate</div>
+                    <div class="flow-step">Deploy</div>
+                </div>
+
+                <p>The methodology is <span class="highlight">iterative and flexible</span>, allowing teams to move back and forth between phases as new insights emerge. This cyclical nature makes CRISP-DM particularly effective for complex, real-world data science challenges.</p>
+            </section>
+
+            <section id="business-understanding" class="section" style="display: none;">
+                <div class="phase-card">
+                    <div class="phase-header-container">
+                        <h2>1. Business Understanding</h2>
+                        <div class="phase-icon business-understanding">🎯</div>
+                    </div>
+                    
+                    <p>The foundation of any successful data mining project begins with a deep understanding of the business context and objectives. This phase transforms business goals into data mining problem definitions.</p>
+
+                    <h3>Key Activities</h3>
+                    <div class="key-points">
+                        <button class="collapsible">Define Business Objectives</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Clearly articulate what the business wants to achieve and how success will be measured.</p>
+                                <p class="importance-text">Why Important: Without clear business objectives, technical efforts may solve the wrong problem or fail to deliver measurable value.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What specific business problem are we trying to solve?</li>
+                                    <li>How will success be measured in business terms?</li>
+                                    <li>What is the expected ROI or business impact?</li>
+                                    <li>Who are the key stakeholders and decision makers?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Assess Situation</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Evaluate available resources, constraints, assumptions, and risks that may impact the project.</p>
+                                <p class="importance-text">Why Important: Understanding constraints and resources prevents scope creep and ensures realistic planning.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What data, tools, and team resources are available?</li>
+                                    <li>What are the budget and timeline constraints?</li>
+                                    <li>What assumptions are we making about the problem?</li>
+                                    <li>What risks could derail the project?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Determine Goals</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Translate business objectives into specific, measurable data mining goals.</p>
+                                <p class="importance-text">Why Important: Technical goals must align with business objectives to ensure the solution addresses real needs.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What type of ML problem is this (classification, regression, clustering)?</li>
+                                    <li>What level of accuracy or performance is needed?</li>
+                                    <li>What are the technical success criteria?</li>
+                                    <li>How will we validate that the model works?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Project Planning</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Create a comprehensive plan outlining the strategy to achieve the data mining goals.</p>
+                                <p class="importance-text">Why Important: Proper planning prevents delays, manages expectations, and ensures resource allocation.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What are the major milestones and deliverables?</li>
+                                    <li>Who will be responsible for each phase?</li>
+                                    <li>What tools and technologies will we use?</li>
+                                    <li>How will we communicate progress to stakeholders?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Deliverables</h3>
+                    <ul>
+                        <li>Business success criteria</li>
+                        <li>Data mining success criteria</li>
+                        <li>Project plan with timelines and milestones</li>
+                        <li>Risk assessment and mitigation strategies</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="data-understanding" class="section" style="display: none;">
+                <div class="phase-card">
+                    <div class="phase-header-container">
+                        <h2>2. Data Understanding</h2>
+                        <div class="phase-icon data-understanding">📊</div>
+                    </div>
+                    
+                    <p>This phase involves getting familiar with the data, identifying quality problems, discovering initial insights, and detecting interesting subsets to form hypotheses about hidden information.</p>
+
+                    <h3>Key Activities</h3>
+                    <div class="key-points">
+                        <button class="collapsible">Collect Initial Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Gather the data sources identified during business understanding and verify data availability.</p>
+                                <p class="importance-text">Why Important: Early data access reveals potential issues and validates feasibility assumptions made during business understanding.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Can we actually access the data we planned to use?</li>
+                                    <li>Is the data in the format and location we expected?</li>
+                                    <li>Are there legal or privacy restrictions on data usage?</li>
+                                    <li>How much historical data is available?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Describe Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Examine data properties including format, quantity, field meanings, and data types.</p>
+                                <p class="importance-text">Why Important: Understanding data structure and properties is essential for proper analysis and model selection.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What are the data types and formats of each field?</li>
+                                    <li>How many records and variables do we have?</li>
+                                    <li>What do the variable names and values represent?</li>
+                                    <li>Is the data structured or unstructured?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Explore Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Perform initial data analysis using statistical summaries and visualizations.</p>
+                                <p class="importance-text">Why Important: Initial exploration reveals patterns, anomalies, and relationships that guide modeling approach.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What are the distributions of key variables?</li>
+                                    <li>Are there obvious patterns or correlations?</li>
+                                    <li>Which variables seem most relevant to our target?</li>
+                                    <li>Are there unexpected insights in the data?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Verify Quality</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Identify missing values, outliers, and data quality issues that need addressing.</p>
+                                <p class="importance-text">Why Important: Poor data quality can invalidate model results and lead to incorrect business decisions.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>How much data is missing and why?</li>
+                                    <li>Are there obvious outliers or anomalies?</li>
+                                    <li>Is the data consistent across different sources?</li>
+                                    <li>How current and relevant is the data?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Common Techniques</h3>
+                    <ul>
+                        <li>Descriptive statistics (mean, median, standard deviation)</li>
+                        <li>Data visualization (histograms, scatter plots, box plots)</li>
+                        <li>Correlation analysis</li>
+                        <li>Missing value analysis</li>
+                        <li>Outlier detection</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="data-preparation" class="section" style="display: none;">
+                <div class="phase-card">
+                    <div class="phase-header-container">
+                        <h2>3. Data Preparation</h2>
+                        <div class="phase-icon data-preparation">🛠️</div>
+                    </div>
+                    
+                    <p>Often the most time-consuming phase, data preparation involves all activities needed to construct the final dataset for modeling. This phase typically consumes 60-80% of project time.</p>
+
+                    <h3>Key Activities</h3>
+                    <div class="key-points">
+                        <button class="collapsible">Select Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Choose relevant attributes and records based on criteria related to data mining goals.</p>
+                                <p class="importance-text">Why Important: Using the right data subset improves model performance while reducing computational costs.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Which variables are most relevant to our target outcome?</li>
+                                    <li>What time period should we include in our dataset?</li>
+                                    <li>Should we exclude certain records (outliers, incomplete cases)?</li>
+                                    <li>Do we need to sample the data for computational efficiency?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Clean Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Improve data quality by handling missing values, outliers, and inconsistencies.</p>
+                                <p class="importance-text">Why Important: Clean data is essential for reliable model performance and valid business insights.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>How should we handle missing values (impute, delete, or flag)?</li>
+                                    <li>Which outliers are errors vs. legitimate extreme values?</li>
+                                    <li>How do we resolve inconsistencies across data sources?</li>
+                                    <li>What data validation rules should we apply?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Construct Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Create new attributes through feature engineering and data transformations.</p>
+                                <p class="importance-text">Why Important: Feature engineering often has more impact on model performance than algorithm choice.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What new features can we derive from existing data?</li>
+                                    <li>Should we create aggregated or summary variables?</li>
+                                    <li>How can we encode categorical variables for modeling?</li>
+                                    <li>Do we need to create time-based features (trends, seasonality)?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Integrate Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Merge data from multiple sources and resolve conflicts or redundancies.</p>
+                                <p class="importance-text">Why Important: Proper integration ensures consistency and completeness across multiple data sources.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>How do we match records across different data sources?</li>
+                                    <li>What do we do when the same information appears differently?</li>
+                                    <li>How do we handle different time granularities or date formats?</li>
+                                    <li>Are there any data governance or lineage requirements?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Format Data</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Perform syntactic modifications to meet modeling tool requirements.</p>
+                                <p class="importance-text">Why Important: Proper formatting ensures compatibility with modeling tools and optimal performance.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Do we need to normalize or scale numeric variables?</li>
+                                    <li>What file format is best for our modeling tools?</li>
+                                    <li>Should we partition data for training/validation/testing?</li>
+                                    <li>Are there any memory or performance considerations?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Common Tasks</h3>
+                    <ul>
+                        <li>Handling missing values (imputation, deletion)</li>
+                        <li>Outlier treatment</li>
+                        <li>Feature scaling and normalization</li>
+                        <li>Categorical variable encoding</li>
+                        <li>Feature selection and dimensionality reduction</li>
+                        <li>Data sampling and balancing</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="modeling" class="section" style="display: none;">
+                <div class="phase-card">
+                    <div class="phase-header-container">
+                        <h2>4. Modeling</h2>
+                        <div class="phase-icon modeling">🧠</div>
+                    </div>
+                    
+                    <p>In this phase, various modeling techniques are selected and applied, and their parameters are calibrated to optimal values. Multiple algorithms may be tested and compared.</p>
+
+                    <h3>Key Activities</h3>
+                    <div class="key-points">
+                        <button class="collapsible">Select Techniques</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Choose appropriate modeling algorithms based on the problem type and data characteristics.</p>
+                                <p class="importance-text">Why Important: Algorithm choice significantly impacts model performance, interpretability, and deployment requirements.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Which algorithms are appropriate for our problem type?</li>
+                                    <li>Do we need interpretable models or can we use black boxes?</li>
+                                    <li>What are the computational and memory constraints?</li>
+                                    <li>Should we try multiple algorithms and compare results?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Generate Test Design</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Plan how to test model quality and validity before building the model.</p>
+                                <p class="importance-text">Why Important: Proper validation design prevents overfitting and ensures reliable performance estimates.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>How should we split data into training/validation/test sets?</li>
+                                    <li>What validation strategy is appropriate (k-fold, time series, etc.)?</li>
+                                    <li>Which metrics will we use to evaluate model performance?</li>
+                                    <li>How will we detect and prevent overfitting?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Build Models</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Train selected algorithms on the prepared dataset and tune hyperparameters.</p>
+                                <p class="importance-text">Why Important: Model training transforms prepared data into actionable predictions through systematic parameter learning.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What hyperparameters need tuning for each algorithm?</li>
+                                    <li>How will we search the hyperparameter space efficiently?</li>
+                                    <li>Are there any convergence or stability issues?</li>
+                                    <li>Should we use ensemble methods to improve performance?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Assess Models</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Evaluate model performance using appropriate metrics and validation techniques.</p>
+                                <p class="importance-text">Why Important: Model assessment determines which approaches work best and identifies potential issues before deployment.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Which model performs best on our validation metrics?</li>
+                                    <li>Is performance consistent across different data subsets?</li>
+                                    <li>Are there signs of overfitting or underfitting?</li>
+                                    <li>How do models compare in terms of speed and resource usage?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Popular Algorithms by Problem Type</h3>
+                    <ul>
+                        <li><strong>Classification:</strong> Decision Trees, Random Forest, SVM, Logistic Regression, Neural Networks</li>
+                        <li><strong>Regression:</strong> Linear Regression, Ridge/Lasso, Random Forest, Gradient Boosting</li>
+                        <li><strong>Clustering:</strong> K-Means, Hierarchical Clustering, DBSCAN</li>
+                        <li><strong>Association:</strong> Apriori, FP-Growth algorithms</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="evaluation" class="section" style="display: none;">
+                <div class="phase-card">
+                    <div class="phase-header-container">
+                        <h2>5. Evaluation</h2>
+                        <div class="phase-icon evaluation">✅</div>
+                    </div>
+                    
+                    <p>Before deploying models, it's crucial to thoroughly evaluate them to ensure they achieve business objectives and are ready for deployment. This phase provides quality assurance for data mining results.</p>
+
+                    <h3>Key Activities</h3>
+                    <div class="key-points">
+                        <button class="collapsible">Evaluate Results</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Assess model performance against business success criteria, not just technical metrics.</p>
+                                <p class="importance-text">Why Important: Technical performance must translate into business value to justify deployment and investment.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Do model results meet the original business success criteria?</li>
+                                    <li>What is the expected business impact (ROI, cost savings, revenue)?</li>
+                                    <li>Are the results statistically and practically significant?</li>
+                                    <li>How do results compare to current business processes?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Review Process</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Conduct a thorough review of the data mining process to identify missed opportunities.</p>
+                                <p class="importance-text">Why Important: Process review identifies lessons learned and opportunities for improvement before deployment.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Did we follow the planned methodology effectively?</li>
+                                    <li>What worked well and what could be improved?</li>
+                                    <li>Are there any overlooked factors or alternative approaches?</li>
+                                    <li>Did we miss any important data sources or features?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Determine Next Steps</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Determine whether to proceed to deployment or iterate through previous phases.</p>
+                                <p class="importance-text">Why Important: Clear next steps prevent wasted effort and ensure proper resource allocation for the final phase.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Are we ready to proceed with deployment?</li>
+                                    <li>Do we need to iterate on previous phases?</li>
+                                    <li>What additional validation or testing is needed?</li>
+                                    <li>Are there any remaining risks or concerns?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Evaluation Criteria</h3>
+                    <ul>
+                        <li><strong>Technical Performance:</strong> Accuracy, precision, recall, F1-score, AUC</li>
+                        <li><strong>Business Impact:</strong> ROI, cost savings, revenue increase</li>
+                        <li><strong>Operational Feasibility:</strong> Integration complexity, computational requirements</li>
+                        <li><strong>Risk Assessment:</strong> Potential negative consequences, ethical considerations</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="deployment" class="section" style="display: none;">
+                <div class="phase-card">
+                    <div class="phase-header-container">
+                        <h2>6. Deployment</h2>
+                        <div class="phase-icon deployment">🚀</div>
+                    </div>
+                    
+                    <p>The deployment phase involves putting the data mining results into practical use. This often involves integrating models into existing business processes and systems.</p>
+
+                    <h3>Key Activities</h3>
+                    <div class="key-points">
+                        <button class="collapsible">Plan Deployment</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Develop a comprehensive strategy for implementing models in the production environment.</p>
+                                <p class="importance-text">Why Important: Proper deployment planning ensures smooth integration and minimizes business disruption.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>How will the model integrate with existing business processes?</li>
+                                    <li>What infrastructure and resources are needed for deployment?</li>
+                                    <li>Who will be responsible for operating and maintaining the model?</li>
+                                    <li>What is the rollout strategy (pilot, phased, full deployment)?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Monitor & Maintain</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Establish ongoing monitoring to track model performance and plan maintenance activities.</p>
+                                <p class="importance-text">Why Important: Models degrade over time and require ongoing monitoring to maintain business value.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What metrics will we track to monitor model performance?</li>
+                                    <li>How often should we retrain or update the model?</li>
+                                    <li>What triggers will indicate model degradation?</li>
+                                    <li>Who is responsible for ongoing model maintenance?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Final Report</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Document the entire project experience and results for future reference.</p>
+                                <p class="importance-text">Why Important: Documentation preserves knowledge and enables future improvements or similar projects.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>What were the key findings and business insights?</li>
+                                    <li>How do we document the model methodology and limitations?</li>
+                                    <li>What recommendations do we have for future iterations?</li>
+                                    <li>How do we transfer knowledge to operational teams?</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">Review Project</button>
+                        <div class="collapse-content">
+                            <div class="point-card">
+                                <p>Conduct a comprehensive project review to identify lessons learned and improvements.</p>
+                                <p class="importance-text">Why Important: Project retrospectives improve future data science initiatives and team capabilities.</p>
+                                <p><strong>Key Questions:</strong></p>
+                                <ul>
+                                    <li>Did we achieve the original business objectives?</li>
+                                    <li>What lessons learned can improve future projects?</li>
+                                    <li>Where did our initial estimates differ from reality?</li>
+                                    <li>What would we do differently next time?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Deployment Strategies</h3>
+                    <ul>
+                        <li><strong>Batch Processing:</strong> Regular offline model execution for periodic insights</li>
+                        <li><strong>Real-time Scoring:</strong> Live model predictions integrated into applications</li>
+                        <li><strong>Interactive Applications:</strong> User-facing tools for business users to leverage models</li>
+                        <li><strong>Automated Systems:</strong> Models embedded in business processes for automatic decision-making</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="roles-competencies" class="section" style="display: none;">
+                <h2>Roles & Technical Competencies Mapping</h2>
+                
+                <p style="background-color: var(--bosch-white);">Different phases of CRISP-DM require distinct skill sets and team roles. This interactive mapping shows which competencies and professionals are most critical at each stage.</p>
+
+                <div class="roles-mapping">
+                    <div class="mapping-visual">
+                        <div class="phase-column" data-phase="business">
+                            <div class="phase-header business-understanding">
+                                <h3>Business Understanding</h3>
+                                <span class="phase-icon">🎯</span>
+                            </div>
+                            <div class="roles-list">
+                                <div class="role-item primary">
+                                    <span class="role-icon">👔</span>
+                                    <div class="role-info">
+                                        <strong>Business Analyst</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item primary">
+                                    <span class="role-icon">📊</span>
+                                    <div class="role-info">
+                                        <strong>Project Manager</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item secondary">
+                                    <span class="role-icon">🧪</span>
+                                    <div class="role-info">
+                                        <strong>Data Scientist</strong>
+                                        <small>Supporting</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="competencies">
+                                <h4>Key Competencies:</h4>
+                                <span class="comp-tag">Domain Expertise</span>
+                                <span class="comp-tag">Requirements Analysis</span>
+                                <span class="comp-tag">Stakeholder Management</span>
+                                <span class="comp-tag">Project Planning</span>
+                            </div>
+                        </div>
+
+                        <div class="phase-column" data-phase="data-understanding">
+                            <div class="phase-header data-understanding">
+                                <h3>Data Understanding</h3>
+                                <span class="phase-icon">📊</span>
+                            </div>
+                            <div class="roles-list">
+                                <div class="role-item primary">
+                                    <span class="role-icon">🧪</span>
+                                    <div class="role-info">
+                                        <strong>Data Scientist</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item primary">
+                                    <span class="role-icon">🔧</span>
+                                    <div class="role-info">
+                                        <strong>Data Engineer</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item secondary">
+                                    <span class="role-icon">👔</span>
+                                    <div class="role-info">
+                                        <strong>Business Analyst</strong>
+                                        <small>Supporting</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="competencies">
+                                <h4>Key Competencies:</h4>
+                                <span class="comp-tag">Statistical Analysis</span>
+                                <span class="comp-tag">Data Exploration</span>
+                                <span class="comp-tag">SQL/Database Skills</span>
+                                <span class="comp-tag">Data Visualization</span>
+                                <span class="comp-tag">Python/R</span>
+                            </div>
+                        </div>
+
+                        <div class="phase-column" data-phase="data-preparation">
+                            <div class="phase-header data-preparation">
+                                <h3>Data Preparation</h3>
+                                <span class="phase-icon">🛠️</span>
+                            </div>
+                            <div class="roles-list">
+                                <div class="role-item primary">
+                                    <span class="role-icon">🔧</span>
+                                    <div class="role-info">
+                                        <strong>Data Engineer</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item primary">
+                                    <span class="role-icon">🧪</span>
+                                    <div class="role-info">
+                                        <strong>Data Scientist</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item secondary">
+                                    <span class="role-icon">💻</span>
+                                    <div class="role-info">
+                                        <strong>Software Developer</strong>
+                                        <small>Supporting</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="competencies">
+                                <h4>Key Competencies:</h4>
+                                <span class="comp-tag">Data Cleaning</span>
+                                <span class="comp-tag">ETL Processes</span>
+                                <span class="comp-tag">Feature Engineering</span>
+                                <span class="comp-tag">Data Pipeline Development</span>
+                                <span class="comp-tag">Data Quality Management</span>
+                            </div>
+                        </div>
+
+                        <div class="phase-column" data-phase="modeling">
+                            <div class="phase-header modeling">
+                                <h3>Modeling</h3>
+                                <span class="phase-icon">🧠</span>
+                            </div>
+                            <div class="roles-list">
+                                <div class="role-item primary">
+                                    <span class="role-icon">🧪</span>
+                                    <div class="role-info">
+                                        <strong>Data Scientist</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+
+                                <div class="role-item secondary">
+                                    <span class="role-icon">🔧</span>
+                                    <div class="role-info">
+                                        <strong>Data Engineer</strong>
+                                        <small>Supporting</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="competencies">
+                                <h4>Key Competencies:</h4>
+                                <span class="comp-tag">Machine Learning</span>
+                                <span class="comp-tag">Algorithm Selection</span>
+                                <span class="comp-tag">Model Training</span>
+                                <span class="comp-tag">Hyperparameter Tuning</span>
+                                <span class="comp-tag">Cross-Validation</span>
+                            </div>
+                        </div>
+
+                        <div class="phase-column" data-phase="evaluation">
+                            <div class="phase-header evaluation">
+                                <h3>Evaluation</h3>
+                                <span class="phase-icon">✅</span>
+                            </div>
+                            <div class="roles-list">
+                                <div class="role-item primary">
+                                    <span class="role-icon">🧪</span>
+                                    <div class="role-info">
+                                        <strong>Data Scientist</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item primary">
+                                    <span class="role-icon">👔</span>
+                                    <div class="role-info">
+                                        <strong>Business Analyst</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item secondary">
+                                    <span class="role-icon">🎯</span>
+                                    <div class="role-info">
+                                        <strong>Domain Expert</strong>
+                                        <small>Supporting</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="competencies">
+                                <h4>Key Competencies:</h4>
+                                <span class="comp-tag">Model Validation</span>
+                                <span class="comp-tag">Performance Metrics</span>
+                                <span class="comp-tag">Business Impact Assessment</span>
+                                <span class="comp-tag">Statistical Testing</span>
+                            </div>
+                        </div>
+
+                        <div class="phase-column" data-phase="deployment">
+                            <div class="phase-header deployment">
+                                <h3>Deployment</h3>
+                                <span class="phase-icon">🚀</span>
+                            </div>
+                            <div class="roles-list">
+                                <div class="role-item primary">
+                                    <span class="role-icon">💻</span>
+                                    <div class="role-info">
+                                        <strong>Software Engineer/DevOps</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item primary">
+                                    <span class="role-icon">🔧</span>
+                                    <div class="role-info">
+                                        <strong>Data Engineer</strong>
+                                        <small>Primary</small>
+                                    </div>
+                                </div>
+                                <div class="role-item secondary">
+                                    <span class="role-icon">🧪</span>
+                                    <div class="role-info">
+                                        <strong>Data Scientist</strong>
+                                        <small>Supporting</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="competencies">
+                                <h4>Key Competencies:</h4>
+                                <span class="comp-tag">Model Deployment</span>
+                                <span class="comp-tag">MLOps</span>
+                                <span class="comp-tag">API Development</span>
+                                <span class="comp-tag">System Integration</span>
+                                <span class="comp-tag">Infrastructure Management</span>
+                                <span class="comp-tag">CI/CD Pipelines</span>
+                                <span class="comp-tag">Monitoring & Maintenance</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="roles-summary">
+                        <h3>Complete Team Role Definitions</h3>
+                        <div class="role-definitions">
+                            <div class="role-def-card">
+                                <div class="role-def-header">
+                                    <span class="role-icon">🧪</span>
+                                    <h4>Data Scientist</h4>
+                                </div>
+                                <p><strong>Primary Phases:</strong> Data Understanding, Data Preparation, Modeling, Evaluation, Deployment</p>
+                                <p><strong>Core Skills:</strong> Statistical analysis, machine learning, data visualization, domain expertise, experimental design, model deployment, MLOps</p>
+                                <p><strong>Tools:</strong> Python/R, Jupyter, scikit-learn, pandas, matplotlib, MLflow, Docker, cloud ML platforms, model serving frameworks</p>
+                            </div>
+
+                            <div class="role-def-card">
+                                <div class="role-def-header">
+                                    <span class="role-icon">🔧</span>
+                                    <h4>Data Engineer</h4>
+                                </div>
+                                <p><strong>Primary Phases:</strong> Data Understanding, Data Preparation</p>
+                                <p><strong>Core Skills:</strong> Database management, ETL development, data pipeline architecture, data quality assurance</p>
+                                <p><strong>Tools:</strong> SQL, Apache Spark, Airflow, Kafka, cloud data platforms, NoSQL databases</p>
+                            </div>
+
+                            <div class="role-def-card">
+                                <div class="role-def-header">
+                                    <span class="role-icon">💻</span>
+                                    <h4>Software Developer</h4>
+                                </div>
+                                <p><strong>Primary Phases:</strong> Deployment, Data Preparation (integration)</p>
+                                <p><strong>Core Skills:</strong> Application development, API design, system architecture, integration patterns</p>
+                                <p><strong>Tools:</strong> Various programming languages, web frameworks, databases, version control, CI/CD</p>
+                            </div>
+
+                            <div class="role-def-card">
+                                <div class="role-def-header">
+                                    <span class="role-icon">👔</span>
+                                    <h4>Business Analyst</h4>
+                                </div>
+                                <p><strong>Primary Phases:</strong> Business Understanding, Evaluation</p>
+                                <p><strong>Core Skills:</strong> Requirements gathering, process analysis, stakeholder communication, ROI assessment</p>
+                                <p><strong>Tools:</strong> Business intelligence tools, process mapping software, documentation platforms</p>
+                            </div>
+
+                            <div class="role-def-card">
+                                <div class="role-def-header">
+                                    <span class="role-icon">⚙️</span>
+                                    <h4>DevOps Engineer</h4>
+                                </div>
+                                <p><strong>Primary Phases:</strong> Deployment</p>
+                                <p><strong>Core Skills:</strong> Infrastructure management, automation, monitoring, scalability, security</p>
+                                <p><strong>Tools:</strong> Docker, Kubernetes, cloud platforms, monitoring tools, CI/CD pipelines</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="competency-matrix">
+                        <h3>Technical Competency Matrix</h3>
+                        <div class="matrix-container">
+                            <table class="competency-table">
+                                <thead>
+                                    <tr>
+                                        <th>Competency Area</th>
+                                        <th>Business Understanding</th>
+                                        <th>Data Understanding</th>
+                                        <th>Data Preparation</th>
+                                        <th>Modeling</th>
+                                        <th>Evaluation</th>
+                                        <th>Deployment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Domain Knowledge</strong></td>
+                                        <td class="high">High</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="high">High</td>
+                                        <td class="low">Low</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Statistical Analysis</strong></td>
+                                        <td class="low">Low</td>
+                                        <td class="high">High</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="high">High</td>
+                                        <td class="high">High</td>
+                                        <td class="low">Low</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Programming (Python/R)</strong></td>
+                                        <td class="low">Low</td>
+                                        <td class="high">High</td>
+                                        <td class="high">High</td>
+                                        <td class="high">High</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="medium">Medium</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Database/SQL Skills</strong></td>
+                                        <td class="low">Low</td>
+                                        <td class="high">High</td>
+                                        <td class="high">High</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="low">Low</td>
+                                        <td class="medium">Medium</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Machine Learning</strong></td>
+                                        <td class="medium">Medium</td>
+                                        <td class="low">Low</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="high">High</td>
+                                        <td class="high">High</td>
+                                        <td class="medium">Medium</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Software Engineering</strong></td>
+                                        <td class="low">Low</td>
+                                        <td class="low">Low</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="medium">Medium</td>
+                                        <td class="low">Low</td>
+                                        <td class="high">High</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cloud/Infrastructure</strong></td>
+                                        <td class="low">Low</td>
+                                        <td class="low">Low</td>
+                                        <td class="low">Low</td>
+                                        <td class="low">Low</td>
+                                        <td class="low">Low</td>
+                                        <td class="high">High</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="benefits" class="section" style="display: none;">
+                <h2>Benefits of CRISP-DM</h2>
+                
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">⭐</div>
+                        <h3>Industry Standard</h3>
+                        <p>Widely adopted methodology with proven track record across industries and project types.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🔄</div>
+                        <h3>Iterative Process</h3>
+                        <p>Flexible framework that accommodates the iterative nature of data science discovery.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">📈</div>
+                        <h3>Business Focused</h3>
+                        <p>Ensures data mining efforts are aligned with business objectives and deliver tangible value.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">👥</div>
+                        <h3>Team Collaboration</h3>
+                        <p>Provides common framework for communication between technical and business stakeholders.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🎯</div>
+                        <h3>Risk Mitigation</h3>
+                        <p>Structured approach reduces project risks and increases likelihood of successful outcomes.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">📚</div>
+                        <h3>Knowledge Transfer</h3>
+                        <p>Standardized documentation facilitates knowledge sharing and project reproducibility.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section" style="display: none;">
+                <div class="phase-card">
+                    <h2>Why Choose CRISP-DM?</h2>
+                    
+                    <p>CRISP-DM remains one of the most popular data science methodologies because it provides a <span class="highlight">practical, business-oriented framework</span> that can be adapted to various project types and organizational contexts.</p>
+
+                    <h3>Success Factors</h3>
+                    <ul>
+                        <li><strong>Business Alignment:</strong> Keeps technical work focused on business value</li>
+                        <li><strong>Quality Assurance:</strong> Built-in evaluation prevents deployment of inadequate solutions</li>
+                        <li><strong>Documentation:</strong> Systematic documentation enables knowledge retention and transfer</li>
+                        <li><strong>Stakeholder Communication:</strong> Clear phases facilitate project communication and management</li>
+                    </ul>
+
+                    <p>Whether you're working on customer analytics, fraud detection, predictive maintenance, or any other data science challenge, CRISP-DM provides the structure needed to deliver successful, business-impactful results.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Function to show a specific section and hide all others
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show the requested section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                
+                // Scroll to top of main content
+                document.querySelector('.main-content').scrollTop = 0;
+            }
+        }
+
+        // Handle navigation clicks
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1); // Remove the #
+                
+                // Handle special case for home
+                const sectionToShow = targetId === 'home' ? 'home' : targetId;
+                
+                showSection(sectionToShow);
+                
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                // Add active class to clicked nav item
+                this.classList.add('active');
+                
+                // If on mobile, close the menu after selection
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+
+        // Handle home phase card clicks
+        document.querySelectorAll('.home-phase-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                if (sectionId) {
+                    showSection(sectionId);
+                    
+                    // Update active navigation
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    const navItem = document.querySelector(`a[href="#${sectionId}"]`);
+                    if (navItem) {
+                        navItem.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // Intersection Observer for active nav highlighting (when scrolling within a section)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.target.style.display !== 'none') {
+                    const id = entry.target.getAttribute('id');
+                    const navItem = document.querySelector(`a[href="#${id}"]`);
+                    
+                    // Remove active class from all nav items
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    
+                    // Add active class to corresponding nav item
+                    if (navItem) {
+                        navItem.classList.add('active');
+                    }
+                }
+            });
+        }, {
+            threshold: 0.3,
+            rootMargin: '-100px 0px -100px 0px'
+        });
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Add interactive hover effects to phase cards
+        document.querySelectorAll('.phase-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target) && 
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Handle collapsible content
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(collapsible => {
+            collapsible.addEventListener('click', function() {
+                this.classList.toggle('active-collapsible');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Initialize with home page active and open first collapsible in each section
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('home');
+            document.querySelector('a[href="#home"]').classList.add('active');
+            
+            // Responsive image handling
+            const adjustImageSize = () => {
+                const diagramImg = document.querySelector('.crisp-dm-diagram img');
+                if (diagramImg) {
+                    diagramImg.style.maxWidth = window.innerWidth <= 768 ? '100%' : '80%';
+                }
+            };
+            
+            window.addEventListener('resize', adjustImageSize);
+            adjustImageSize();
+            
+            // Automatically open the first collapsible in each section for better visibility
+            document.querySelectorAll('.key-points').forEach(keyPoints => {
+                const firstCollapsible = keyPoints.querySelector('.collapsible');
+                if (firstCollapsible) {
+                    firstCollapsible.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
