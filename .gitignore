@@ -3,3 +3,4 @@
 *.pth
 an2/Sem1/deep-learning/proiect/data
 an2/Sem1/deep-learning/proiect/generated
+*.safetensors
