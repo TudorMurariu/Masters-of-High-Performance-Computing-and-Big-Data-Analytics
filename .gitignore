@@ -12,3 +12,6 @@ an2/Sem1/deep-learning/proiect/generated
 *.ttf
 an2/Sem2/Disertatie/node_modules
 *.csv
+*.gz
+*.zip
+*.pth
