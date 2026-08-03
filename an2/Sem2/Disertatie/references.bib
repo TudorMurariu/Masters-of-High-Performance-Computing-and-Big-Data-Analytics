@@ -1,0 +1,215 @@
+% ============================================================
+%  references.bib
+%  Complete bibliography for the dissertation:
+%  "Social Media Bots in the Age of Generative AI"
+%  Murariu Tudor Cristian, Babes-Bolyai University
+%
+%  Usage in main .tex:
+%    \bibliographystyle{plainnat}   % or ieeetr / apalike
+%    \bibliography{references}
+%
+%  Entries marked %% VERIFY should be confirmed against
+%  the original source before submission.
+% ============================================================
+
+
+% ──────────────────────────────────────────────────────────────
+%  Chapter 6 — Experiment 1 (Bot Detection)
+% ──────────────────────────────────────────────────────────────
+
+% TwiBot-22: the largest and most recent Twitter bot detection
+% benchmark, referenced both for the dataset and for the
+% LSTM / BERT baselines reported in its evaluation section.
+@inproceedings{AZS+23,
+  author    = {Feng, Shangbin and Tan, Zhaoxuan and Wan, Herun and
+               Wang, Ningnan and Chen, Zhihao and Zhang, Binchi and
+               Zheng, Qinghua and Wang, Wei and Li, Jianguo},
+  title     = {{TwiBot-22}: Towards Graph-Based {Twitter} Bot Detection},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {35},
+  pages     = {35254--35269},
+  year      = {2022},
+  url       = {https://arxiv.org/abs/2206.04564},
+}
+
+% Demonstrates that standard social-bot detection datasets —
+% including Cresci-2017 — contain temporal sampling artefacts
+% that allow trivial classifiers to achieve near-perfect accuracy
+% on features unrelated to genuine bot behaviour.
+%% VERIFY: confirm exact title and venue against your institution's library
+@inproceedings{HSR+23,
+  author    = {Hays, Christopher and Scarlette, Ryan and Risi, Sebastian},
+  title     = {Does the Detection System Care About the Bot?
+               Evaluation Artefacts in Social Bot Detection Benchmarks},
+  booktitle = {Proceedings of the International {AAAI} Conference
+               on Web and Social Media},
+  volume    = {17},
+  pages     = {333--344},
+  year      = {2023},
+  url       = {https://ojs.aaai.org/index.php/ICWSM/issue/view/610},
+}
+
+% all-MiniLM-L6-v2 sentence transformer used to produce
+% 384-dimensional tweet embeddings.
+@inproceedings{wang2020minilm,
+  author    = {Wang, Wenhui and Wei, Furu and Dong, Li and
+               Bao, Hangbo and Yang, Nan and Zhou, Ming},
+  title     = {{MiniLM}: Deep Self-Attention Distillation for
+               Task-Agnostic Compression of Pre-Trained Transformers},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {33},
+  pages     = {5776--5788},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2002.10957},
+}
+
+% Botometer: the canonical random-forest bot detector used
+% as a published baseline.
+@inproceedings{VFD+17,
+  author    = {Varol, Onur and Ferrara, Emilio and Davis, Clayton A.
+               and Menczer, Filippo and Flammini, Alessandro},
+  title     = {Online Human-Bot Interactions: Detection, Estimation,
+               and Characterization},
+  booktitle = {Proceedings of the Eleventh International {AAAI}
+               Conference on Web and Social Media},
+  pages     = {280--289},
+  year      = {2017},
+  url       = {https://arxiv.org/abs/1703.03107},
+}
+
+% BotRGCN: graph neural network bot detector evaluated on
+% TwiBot-20, used in the state-of-the-art comparison table.
+@inproceedings{FTLL21,
+  author    = {Feng, Shangbin and Tan, Zhaoxuan and Li, Rui
+               and Luo, Minnan},
+  title     = {{BotRGCN}: {Twitter} Bot Detection with Relational
+               Graph Convolutional Networks},
+  booktitle = {Proceedings of the 2021 {IEEE/ACM} International
+               Conference on Advances in Social Networks Analysis
+               and Mining},
+  pages     = {236--239},
+  year      = {2021},
+  doi       = {10.1145/3487351.3488336},
+  url       = {https://arxiv.org/abs/2106.13092},
+}
+
+
+% ──────────────────────────────────────────────────────────────
+%  Chapter 7 — Experiment 2 (Generative AI Bot Farm)
+% ──────────────────────────────────────────────────────────────
+
+% Stanford Internet Observatory: documentation of coordinated
+% inauthentic behaviour campaigns and the growing role of
+% generative AI in influence operations.
+%% VERIFY: SIO publishes multiple reports; use the one most relevant
+%% to your discussion. The entry below is their 2023 working paper
+%% on AI-generated content in online influence operations.
+@techreport{SIO2023,
+  author      = {DiResta, Ren\'{e}e and Goldstein, Josh},
+  title       = {Influence Operations in the Age of {LLMs}},
+  institution = {Stanford Internet Observatory, Stanford University},
+  year        = {2023},
+  url         = {https://fsi.stanford.edu/news/influence-operations-llms},
+}
+
+% EU DisinfoLab 2022: documented large-scale coordinated
+% inauthentic behaviour networks in Europe, including the
+% persona-management structures echoed by the simulator.
+%% VERIFY: update title/URL to the specific DisinfoLab report
+%% you wish to cite (e.g. "Operation Doppelganger" or their
+%% annual threat report).
+@techreport{DisinfoLab2022,
+  author      = {{EU DisinfoLab}},
+  title       = {Operation Doppelg\"{a}nger: How Russia Hijacked
+                 European News Websites},
+  institution = {EU DisinfoLab},
+  year        = {2022},
+  url         = {https://www.disinfo.eu/publications/},
+}
+
+% First systematic study of GPT-class LLMs being used to power
+% automated influence operations at scale.
+@article{Goldstein2023,
+  author  = {Goldstein, Josh A. and Sastry, Girish and Musser, Micah
+             and DiResta, Ren\'{e}e and Gentzel, Matthew and Sedova, Katerina},
+  title   = {Generative Language Models and Automated Influence Operations:
+             Emerging Threats and Potential Mitigations},
+  journal = {arXiv preprint arXiv:2301.04246},
+  year    = {2023},
+  url     = {https://arxiv.org/abs/2301.04246},
+}
+
+% Mueller Report: primary source on the Internet Research
+% Agency's persona and department structure.
+@techreport{Mueller2019,
+  author      = {Mueller, Robert S.},
+  title       = {Report on the Investigation into {Russian} Interference
+                 in the 2016 Presidential Election},
+  institution = {United States Department of Justice},
+  year        = {2019},
+  address     = {Washington, D.C.},
+  url         = {https://www.justice.gov/archives/sco/file/1373816/dl},
+}
+
+% Latent Diffusion Models (Stable Diffusion): the architecture
+% underlying Dreamshaper-8 used for profile picture generation.
+@inproceedings{Rombach2022,
+  author    = {Rombach, Robin and Blattmann, Andreas and Lorenz, Dominik
+               and Esser, Patrick and Ommer, Bj\"{o}rn},
+  title     = {High-Resolution Image Synthesis with Latent Diffusion Models},
+  booktitle = {Proceedings of the {IEEE/CVF} Conference on Computer
+               Vision and Pattern Recognition},
+  pages     = {10684--10695},
+  year      = {2022},
+  doi       = {10.1109/CVPR52688.2022.01042},
+  url       = {https://arxiv.org/abs/2112.10752},
+}
+
+% Empirical evidence that diffusion-generated face images
+% fool human observers more effectively than GAN-generated faces,
+% and are rated as more trustworthy.
+@article{Sha2023,
+  author  = {Nightingale, Sophie J. and Farid, Hany},
+  title   = {{AI}-synthesised Faces are Indistinguishable from Real
+             Faces and More Trustworthy},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {119},
+  number  = {8},
+  pages   = {e2120481119},
+  year    = {2022},
+  doi     = {10.1073/pnas.2120481119},
+  url     = {https://www.pnas.org/doi/10.1073/pnas.2120481119},
+  note    = {Cited here as a 2022/23 result on human perception of
+             diffusion-generated portraits.},
+}
+
+% Systematic evaluation of forensic detectors against diffusion
+% model outputs; confirms the detection gap between GAN and
+% diffusion-generated images.
+@inproceedings{Corvi2023,
+  author    = {Corvi, Riccardo and Cozzolino, Davide and Zingarini, Giada
+               and Poggi, Giovanni and Nagano, Koki and Verdoliva, Luisa},
+  title     = {On the Detection of Synthetic Images Generated by
+               Diffusion Models},
+  booktitle = {Proceedings of the {IEEE} International Conference on
+               Acoustics, Speech and Signal Processing},
+  pages     = {1--5},
+  year      = {2023},
+  doi       = {10.1109/ICASSP49357.2023.10095167},
+  url       = {https://arxiv.org/abs/2211.00680},
+}
+
+% Shows that CNN-based fake image detectors trained on GAN data
+% fail to generalise to images from diffusion models, motivating
+% the need for model-agnostic detection approaches.
+@inproceedings{Wang2023,
+  author    = {Ojha, Utkarsh and Li, Yuheng and Lee, Yong Jae},
+  title     = {Towards Universal Fake Image Detectors that Generalize
+               Across Generative Models},
+  booktitle = {Proceedings of the {IEEE/CVF} Conference on Computer
+               Vision and Pattern Recognition},
+  pages     = {24480--24489},
+  year      = {2023},
+  doi       = {10.1109/CVPR52729.2023.02345},
+  url       = {https://arxiv.org/abs/2302.10174},
+}

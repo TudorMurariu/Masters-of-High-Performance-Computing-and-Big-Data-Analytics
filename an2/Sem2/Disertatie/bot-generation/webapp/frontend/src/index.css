@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* smooth scrollbar */
+* { scrollbar-width: thin; }
+.dark * { scrollbar-color: #334155 transparent; }
+*       { scrollbar-color: #cbd5e1 transparent; }
+
+/* smooth background/color transitions when toggling theme */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* don't slow down animated elements */
+.animate-spin, .animate-pulse, video, img {
+  transition: none !important;
+}

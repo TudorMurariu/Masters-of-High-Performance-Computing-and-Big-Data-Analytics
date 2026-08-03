@@ -5,3 +5,10 @@ an2/Sem1/deep-learning/proiect/data
 an2/Sem1/deep-learning/proiect/generated
 *.safetensors
 *CLAUDE.md
+*.mp4
+*.pyc
+*.cmd
+*.ps1
+*.ttf
+an2/Sem2/Disertatie/node_modules
+*.csv
